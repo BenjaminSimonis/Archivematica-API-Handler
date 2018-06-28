@@ -1,11 +1,13 @@
 #!/usr/bin/env python
-import sys
-import requests
 import base64
+import json
+import requests
+import sys
+import time
 from os import fsencode
 from sysParameters import *
+from help import *
 
-# TODO: Überall ein Print hinzufügen, um den methodennamen anzuzeig in der konsole
 ######################################
 ########### Transfer API #############
 ######################################
@@ -19,11 +21,9 @@ from sysParameters import *
 def start_transfer(name, type, accession, path):
     url = URL_TRANSFER + "/start_transfer/"
     print("Starting Transfer")
-    # TODO: Überprüfung des übergebenen Datasets
     dataset = {"name": name, "type": type, "accession": accession, "paths[]": [create_base64_path(path)],
                "row_ids[]": [""]}
-    post_request(url, dataset)
-    return
+    return start_and_approve(post_request(url, dataset))
 
 
 # URL: /api/transfer/unapproved
@@ -33,8 +33,7 @@ def start_transfer(name, type, accession, path):
 def list_unapproved_transfers():
     url = URL_TRANSFER + "/unapproved"
     print("Unapproved Transfers")
-    get_request(url)
-    return
+    return get_request(url)
 
 
 # URL: /api/transfer/approve
@@ -46,8 +45,7 @@ def approve_transfer(type, dir):
     url = URL_TRANSFER + "/approve"
     print("Approve Transfer")
     dataset = {"type": type, "directory": dir}
-    post_request(url, dataset)
-    return
+    return post_request(url, dataset)
 
 
 # URL: /api/transfer/status/<transfer UUID>/
@@ -175,19 +173,19 @@ def adding_md_to_ingest():
 def get_request(path):
     r = requests.get((URL + path), headers=AUTH_HEADER)
     process_response(r)
-    return
+    return r
 
 
 def post_request(path, dataset):
     r = requests.post((URL + path), data=dataset, headers=AUTH_HEADER)
     process_response(r)
-    return
+    return r
 
 
 def delete_request(path):
     r = requests.delete((URL + path), headers=AUTH_HEADER)
     process_response(r)
-    return
+    return r
 
 
 ######################################
@@ -205,10 +203,27 @@ def create_base64_path(target_path):
 
 
 ######################################
+######### Processing Calls ###########
+######################################
+
+def start_and_approve(r):
+    raw_json_start = json.loads(r.text)
+    start_dir_name = raw_json_start["path"].split("/")[-2]
+    time.sleep(5)
+    unapproved_transfers = json.loads(list_unapproved_transfers().text)
+    for result in unapproved_transfers["results"]:
+        if result["directory"] == start_dir_name:
+            approve_transfer(result["type"], start_dir_name)
+            break
+        else:
+            continue
+    return
+
+
+######################################
 ####### Postprocessing Calls #########
 ######################################
 
-# TODO: abhängig von Methode, verschiedene Darstellungen des ergebnis
 def process_response(r):
     if r.status_code == 200:
         print("Success!")
@@ -216,8 +231,6 @@ def process_response(r):
     else:
         print("Failed!")
         raise Exception(r.reason)
-    #print(r.status_code, r.reason)
-    #print(r.text)
     return
 
 
@@ -228,7 +241,12 @@ def process_response(r):
 def init():
     method = sys.argv[1]
     if method == "help":
-        pass
+        if sys.argv.__len__() == 2:
+            list_commands()
+            return
+        else:
+            command_description(sys.argv[2])
+            return
     elif method == "start_transfer" and sys.argv.__len__() == 6:
         start_transfer(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
         return
@@ -266,7 +284,7 @@ def init():
         start_partial_reingest(sys.argv[2], sys.argv[3])
         return
     else:
-        raise SyntaxError('Use one of the documented keywords!')
+        raise SyntaxError('Use one of the documented keywords! You can list them with der parameter "help".')
 
 
 ######################################
