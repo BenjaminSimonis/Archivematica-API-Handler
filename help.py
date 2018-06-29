@@ -11,32 +11,46 @@ def list_commands():
     print("completed_ingest - List of completed ingests.")
     print("full_reingest")
     print("part_reingest")
+    print("\nFor detailed informations about the commands use 'apiHandler.py help {\"command_name\"}'")
     return
+
 
 def command_description(command):
     if command == "start_transfer":
-        pass
+        print("apiHandler.py start_transfer {'name for transfer'} {'type of transfer'} {'accession number'} {'foldername in source path'}")
+        return
     elif command == "list_unapproved":
-        pass
+        print("apiHandler.py list_unapproved")
+        return
     elif command == "approve_transfer":
-        pass
+        print("apiHandler.py approve_transfer {'type of transfer'} {'name for transfer'}")
+        return
     elif command == "status_transfer":
-        pass
+        print("apiHandler.py status_transfer {'uuid of transfer'}")
+        return
     elif command == "completed_transfer":
-        pass
+        print("apiHandler.py completed_transfer")
+        return
     elif command == "hide_transfer":
-        pass
+        print("apiHandler.py hide_transfer {'uuid of transfer'}")
+        return
     elif command == "status_ingest":
-        pass
+        print("apiHandler.py status_ingest {'uuid of ingest'}")
+        return
     elif command == "hide_ingest":
-        pass
+        print("apiHandler.py hide_ingest {'uuid of ingest'}")
+        return
     elif command == "waiting_ingests":
-        pass
+        print("apiHandler.py waiting_ingests")
+        return
     elif command == "completed_ingest":
-        pass
+        print("apiHandler.py completed_ingest")
+        return
     elif command == "full_reingest":
-        pass
+        print("apiHandler.py full_reingest")
+        return
     elif command == "part_reingest":
-        pass
+        print("apiHandler.py part_reingest")
+        return
     else:
         raise SyntaxError('Use one of the documented keywords!')
