@@ -3,10 +3,12 @@ import base64
 import json
 import requests
 import sys
-import time
+
 from os import fsencode
-from sysParameters import *
+from time import sleep
+
 from help import *
+from sysParameters import *
 
 ######################################
 ########### Transfer API #############
@@ -209,7 +211,7 @@ def create_base64_path(target_path):
 def start_and_approve(r):
     raw_json_start = json.loads(r.text)
     start_dir_name = raw_json_start["path"].split("/")[-2]
-    time.sleep(5)
+    sleep(5)
     unapproved_transfers = json.loads(list_unapproved_transfers().text)
     for result in unapproved_transfers["results"]:
         if result["directory"] == start_dir_name:
