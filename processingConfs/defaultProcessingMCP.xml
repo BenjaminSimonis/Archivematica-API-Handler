@@ -1,0 +1,34 @@
+<processingMCP>
+  <preconfiguredChoices>
+    <!-- Select compression level -->
+    <preconfiguredChoice>
+      <appliesTo>01c651cb-c174-4ba4-b985-1d87a44d6754</appliesTo>
+      <goToChain>ecfad581-b007-4612-a0e0-fcc551f4057f</goToChain>
+    </preconfiguredChoice>
+    <!-- Select file format identification command (Submission documentation & metadata) -->
+    <preconfiguredChoice>
+      <appliesTo>087d27be-c719-47d8-9bbb-9a7d8b609c44</appliesTo>
+      <goToChain>25a91595-37f0-4373-a89a-56a757353fb8</goToChain>
+    </preconfiguredChoice>
+    <!-- Select compression algorithm -->
+    <preconfiguredChoice>
+      <appliesTo>01d64f58-8295-4b7b-9cab-8f1b153a504f</appliesTo>
+      <goToChain>9475447c-9889-430c-9477-6287a9574c5b</goToChain>
+    </preconfiguredChoice>
+    <!-- Delete packages after extraction -->
+    <preconfiguredChoice>
+      <appliesTo>f19926dd-8fb5-4c79-8ade-c83f61f55b40</appliesTo>
+      <goToChain>85b1e45d-8f98-4cae-8336-72f40e12cbef</goToChain>
+    </preconfiguredChoice>
+    <!-- Select file format identification command (Ingest) -->
+    <preconfiguredChoice>
+      <appliesTo>7a024896-c4f7-4808-a240-44c87c762bc5</appliesTo>
+      <goToChain>3c1faec7-7e1e-4cdd-b3bd-e2f05f4baa9b</goToChain>
+    </preconfiguredChoice>
+    <!-- Send transfer to quarantine -->
+    <preconfiguredChoice>
+      <appliesTo>755b4177-c587-41a7-8c52-015277568302</appliesTo>
+      <goToChain>d4404ab1-dc7f-4e9e-b1f8-aa861e766b8e</goToChain>
+    </preconfiguredChoice>
+  </preconfiguredChoices>
+</processingMCP>
