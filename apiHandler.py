@@ -197,7 +197,7 @@ def delete_request(path):
 
 def create_base64_path(target_path):
     if target_path == "":
-        path = TARGET
+        path = TARGET_SOURCE
     else:
         path = target_path
     base_path = base64.b64encode(fsencode(TS_LOCATION_UUID) + b':' + fsencode(path))
