@@ -9,6 +9,7 @@ from time import sleep
 
 from help import *
 from sysParameters import *
+import processingHandler
 
 ######################################
 ########### Transfer API #############
@@ -284,6 +285,9 @@ def init():
         return
     elif method == "part_reingest" and sys.argv.__len__() == 4:
         start_partial_reingest(sys.argv[2], sys.argv[3])
+        return
+    elif method == "test":
+        processingHandler.compare_processing_file(sys.argv[2])
         return
     else:
         raise SyntaxError('Use one of the documented keywords! You can list them with der parameter "help".')
