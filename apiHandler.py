@@ -21,11 +21,12 @@ import processingHandler
 # Start a transfer
 # Parameters: JSON body
 # Response: JSON
-def start_transfer(name, type, accession, path):
+def start_transfer(name, type, accession, path, procFile):
     url = URL_TRANSFER + "/start_transfer/"
     print("Starting Transfer")
     dataset = {"name": name, "type": type, "accession": accession, "paths[]": [create_base64_path(path)],
                "row_ids[]": [""]}
+    processingHandler.compare_processing_file(procFile)
     return start_and_approve(post_request(url, dataset))
 
 
@@ -250,8 +251,8 @@ def init():
         else:
             command_description(sys.argv[2])
             return
-    elif method == "start_transfer" and sys.argv.__len__() == 6:
-        start_transfer(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    elif method == "start_transfer" and sys.argv.__len__() == 7:
+        start_transfer(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
         return
     elif method == "list_unapproved":
         list_unapproved_transfers()
@@ -288,7 +289,6 @@ def init():
         return
     elif method == "test":
         processingHandler.compare_processing_file(sys.argv[2])
-	exit(0)
         return
     else:
         raise SyntaxError('Use one of the documented keywords! You can list them with der parameter "help".')
