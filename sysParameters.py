@@ -1,4 +1,4 @@
-TARGET = "SOURCE PATH"
+TARGET_SOURCE = "SOURCE PATH"
 TS_LOCATION_UUID = "UUID"
 
 AUTH_HEADER = {"Authorization": "ApiKey test:test"}
@@ -14,3 +14,4 @@ PROCESS_PATH = "../sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPC
 PROCESS_PATH_AUTOMATED = PROCESS_PATH + PROCESS_AUTOMATED
 PROCESS_PATH_DEFAULT = PROCESS_PATH + PROCESS_DEFAULT
 LOCAL_PROCESS = "processingConfs/"
+HANDLER_PATH = "/var/archivematica/Archivematica-API-Handler/"

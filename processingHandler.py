@@ -4,18 +4,17 @@ from sysParameters import *
 
 
 def compare_processing_file(procFile):
-    diffPath = "bash " + HANDLER_PATH + LOCAL_PROCESS + "diffProcessing.sh " + procFile
+    diffPath = "bash " + HANDLER_PATH + LOCAL_PROCESS + "diffProcessing.sh " + HANDLER_PATH + LOCAL_PROCESS + procFile
     diff = subprocess.check_output(diffPath, shell=True)
-    print(len(diff))
-    if len(diff) > 1:
+    if len(diff) > 0:
         print("there is a diff")
         #TODO change processing file method
-        pass
+        return
     else:
         print("there is no diff")
         #TODO
-        pass
-    pass
+        return
+    return
 
 
 def change_processing_file():

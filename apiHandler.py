@@ -4,7 +4,7 @@ import json
 import requests
 import sys
 
-from os import fsencode
+import os
 from time import sleep
 
 from help import *
@@ -201,7 +201,7 @@ def create_base64_path(target_path):
         path = TARGET_SOURCE
     else:
         path = target_path
-    base_path = base64.b64encode(fsencode(TS_LOCATION_UUID) + b':' + fsencode(path))
+    base_path = base64.b64encode(os.fsencode(TS_LOCATION_UUID) + b':' + os.fsencode(path))
     return base_path
 
 
@@ -288,6 +288,7 @@ def init():
         return
     elif method == "test":
         processingHandler.compare_processing_file(sys.argv[2])
+	exit(0)
         return
     else:
         raise SyntaxError('Use one of the documented keywords! You can list them with der parameter "help".')

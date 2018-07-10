@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-diff ../../sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/defaultProcessingMCP.xml $1
+diff /var/archivematica/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/defaultProcessingMCP.xml $1
 exit 0
