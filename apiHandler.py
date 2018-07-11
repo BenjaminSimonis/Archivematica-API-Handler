@@ -196,7 +196,7 @@ def delete_request(path):
 ####### Preprocessing Calls ##########
 ######################################
 
-
+# Encode the path for a package in base64 format
 def create_base64_path(target_path):
     if target_path == "":
         path = TARGET_SOURCE
@@ -210,6 +210,7 @@ def create_base64_path(target_path):
 ######### Processing Calls ###########
 ######################################
 
+# Start a new transfer, wait for 5 seconds, get a list of unapproved transfers and approve the one that was started
 def start_and_approve(r):
     raw_json_start = json.loads(r.text)
     start_dir_name = raw_json_start["path"].split("/")[-2]
@@ -228,6 +229,7 @@ def start_and_approve(r):
 ####### Postprocessing Calls #########
 ######################################
 
+# If something went wrong raise an exception
 def process_response(r):
     if r.status_code == 200:
         print("Success!")
