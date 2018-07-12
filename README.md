@@ -3,19 +3,19 @@
 A more easier API handler to make POST-Request and other calls with an ordinary body instead of an JSON body until the bug is fixed from Artefactual.
 https://groups.google.com/forum/#!topic/archivematica/IvkI4xScFTU
 
-##Requirements
+#Requirements
 
 - Python 3
 - Archivematica with Standard Paths
 
 
-##Installation
+#Installation
 
 - clone this project in /var/archivematica/
 - sudo bash install.sh
 
 
-##Commands
+#Commands
 
 - python3 apiHandler.py help 
   - Print all commands with parameters
