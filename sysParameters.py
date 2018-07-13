@@ -17,6 +17,7 @@ SOURCE_PATH = WORKING_PATH + "/source"
 EBOOK_SOURCE_PATH = SOURCE_PATH + "/ebooks"
 RETRO_SOURCE_PATH = SOURCE_PATH + "/retro"
 FREIDOK_SOURCE_PATH = SOURCE_PATH + "/freidok"
+DONE_SOURCE_PATH = SOURCE_PATH + "/done"
 
 
 # Processing path informations

@@ -199,7 +199,7 @@ def delete_request(path):
 # Encode the path for a package in base64 format
 def create_base64_path(target_path):
     if target_path == "":
-        path = TARGET_SOURCE
+        path = SOURCE_PATH
     else:
         path = target_path
     base_path = base64.b64encode(os.fsencode(TS_LOCATION_UUID) + b':' + os.fsencode(path))

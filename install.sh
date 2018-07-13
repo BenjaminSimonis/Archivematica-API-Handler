@@ -7,3 +7,8 @@ wget https://bootstrap.pypa.io/get-pip.py
 sudo python3 get-pip.py
 sudo python3 -m pip install requests
 sudo rm get-pip.py
+mkdir ../source
+mkdir ../source/ebooks
+mkdir ../source/retro
+mkdir ../source/freidok
+mkdir ../source/done
