@@ -1,6 +1,6 @@
 import json
 
-from apiHandler import completed_transfers
+from apiHandler import completed_ingests
 from datetime import timedelta, datetime
 from os import getcwd, listdir
 from shutil import move, rmtree
@@ -9,7 +9,7 @@ from sysParameters import DONE_SOURCE_PATH
 
 # Check via API if an Ingest is completed
 def is_ingest_complete(uuid):
-    transfers = completed_transfers()
+    transfers = completed_ingests()
     j = json.dumps(transfers.text)
     results = j['results']
     if uuid in results:
@@ -19,9 +19,12 @@ def is_ingest_complete(uuid):
 
 
 # Move the source of an completed ingest to the done directory
-def move_source_to_done(path):
-    move(path, DONE_SOURCE_PATH)
-    create_delete_date(path)
+def move_source_to_done(path, uuid):
+    if is_ingest_complete(uuid):
+        move(path, DONE_SOURCE_PATH)
+        create_delete_date(path)
+    else:
+        print("Ingest is not completed")
     return
 
 

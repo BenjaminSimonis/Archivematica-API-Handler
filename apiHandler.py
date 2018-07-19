@@ -130,8 +130,8 @@ def waiting_for_user_ingests():
 def completed_ingests():
     url = URL_INGEST + "/completed/"
     print("Completed Ingests")
-    get_request(url)
-    return
+    r = get_request(url)
+    return r
 
 
 # URL: /api/transfer/reingest
@@ -157,7 +157,7 @@ def start_partial_reingest(name, uuid):
     print("Full Re-Ingest")
     dataset = {"name": name, "uuid": uuid}
     post_request(url, dataset)
-    return
+    pass
 
 
 # URL: /api/ingest/copy_metadata_files/
