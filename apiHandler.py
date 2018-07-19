@@ -2,12 +2,10 @@
 import base64
 import json
 import requests
-import sys
 
 import os
 from time import sleep
 
-from help import *
 from sysParameters import *
 import processingHandler
 

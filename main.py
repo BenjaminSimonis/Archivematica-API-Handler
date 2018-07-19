@@ -1,8 +1,9 @@
+import help
+import processingHandler
 import sys
 
-import processingHandler
-from apiHandler import start_partial_reingest, start_full_reingest, completed_ingests, waiting_for_user_ingests, \
-    hide_ingest, status_ingest, hide_transfer, list_commands, command_description, start_transfer, \
+from apiHandler import start_partial_reingest, start_full_reingest, completed_ingests, \
+    waiting_for_user_ingests, hide_ingest, status_ingest, hide_transfer, start_transfer, \
     list_unapproved_transfers, approve_transfer, status_transfer, completed_transfers
 
 
@@ -15,10 +16,10 @@ def init():
     method = sys.argv[1]
     if method == "help":
         if sys.argv.__len__() == 2:
-            list_commands()
+            help.list_commands()
             return
         else:
-            command_description(sys.argv[2])
+            help.command_description(sys.argv[2])
             return
     elif method == "start_transfer" and sys.argv.__len__() == 7:
         start_transfer(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
