@@ -1,6 +1,6 @@
 import subprocess
 
-from sysParameters import *
+from constants import *
 
 
 # Check if the current processing XML file has a diff with the wanted processing file. When true, change the files

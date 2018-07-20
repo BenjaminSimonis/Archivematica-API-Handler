@@ -4,7 +4,7 @@ from apiHandler import completed_ingests
 from datetime import timedelta, datetime
 from os import getcwd, listdir
 from shutil import move, rmtree
-from sysParameters import DONE_SOURCE_PATH
+from constants import DONE_SOURCE_PATH
 
 
 # Check via API if an Ingest is completed
