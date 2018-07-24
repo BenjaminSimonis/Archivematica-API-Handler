@@ -12,6 +12,10 @@ def start_transfer():
     pass
 
 
+def restart_transfer():
+    pass
+
+
 def refresh_transfer_list():
     pass
 

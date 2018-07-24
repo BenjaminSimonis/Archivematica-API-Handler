@@ -26,25 +26,29 @@ DB_FILE = HANDLER_PATH + "storage.db"
 CREATE_TRANSFER_TABLE = "CREATE TABLE transfer (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                          source INTEGER NOT NULL, tname TEXT NOT NULL, \
                          acnumber INTEGER, uuid TEXT NOT NULL, status TEXT NOT NULL, \
-                         failcount INTEGER DEFAULT 0, deletedate INTEGER, procconf TEXT NOT NULL, \
+                         deletedate INTEGER, procconf TEXT NOT NULL, \
                          FOREIGN KEY (source) REFERENCES sources(_id));"
 
 # TODO: Add column for transfer directory/type
 # TODO: Add column timestamp, when source is added to db
+# TODO: Add column ingest_finished
 CREATE_SOURCE_TABLE = "CREATE TABLE sources (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
                        oname TEXT NOT NULL, transfer_started INTEGER DEFAULT 0);"
 
 DELETE_TRANSFER = "DELETE FROM transfer WHERE _id = ?;"
-INSERT_TRANSFER = "INSERT INTO transfer (source,tname,acnumber,uuid,status,deletedate,procconf)\
-                VALUES (?,?,?,?,?,?,?);"
+INSERT_TRANSFER = "INSERT INTO transfer (source,tname,acnumber,uuid,status,procconf)\
+                VALUES (?,?,?,?,?,?);"
 UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE uuid = ?;"
 ALL_TRANSFERS = "SELECT * FROM transfer;"
 ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE uuid = ?;"
+ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
 
 DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
 INSERT_SOURCE = "INSERT INTO sources (oname) VALUES (?);"
+UPDATE_STATUS_SOURCE = "UPDATE source SET transfer_started = ? WHERE _id = ?;"
 ALL_SOURCES = "SELECT * FROM sources;"
 ONE_SOURCE_NAME = "SELECT * FROM sources WHERE oname = ?;"
+ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"
 
 # Miscellaneous constants
 SOURCE = "SOURCE"
@@ -53,3 +57,4 @@ GET_ALL = "GET_ALL"
 GET_ONE = "GET_ONE"
 INSERT = "INSERT"
 DELETE = "DELETE"
+FAILED = "FAILED"
