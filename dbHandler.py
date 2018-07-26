@@ -88,7 +88,6 @@ def create_db():
 
 ##################################
 # Methods for the transfer table
-# TODO: Check, if the entry exists
 ##################################
 def get_transfer_list(cursor):
     cursor.execute(ALL_TRANSFERS)
@@ -165,15 +164,19 @@ def delete_source(cursor, source_id):
         raise Exception("delete_source:\nSomething went wrong: Rowcount = " + cursor.rowcount)
 
 
+# Returns true, when insert was successful. returns false, when insert already exists
 def insert_source(cursor, oname):
-    cursor.execute(INSERT_SOURCE, oname[0])
-    if cursor.rowcount == 1:
-        return True
+    if get_source(cursor, oname) is None:
+        cursor.execute(INSERT_SOURCE, oname[0])
+        if cursor.rowcount == 1:
+            return True
+        else:
+            raise Exception('\"' + oname + '\" couldn\'t be inserted! Rowcount: ' + cursor.rowcount)
     else:
-        raise Exception('\"' + oname + '\" couldn\'t be inserted! Rowcount: ' + cursor.rowcount)
+        return False
 
 
-# First check
+# First check the started status, then make a update. Otherwise return false
 def update_source_started(cursor, source_id, started):
     cursor.execute(UPDATE_STATUS_SOURCE, (source_id, started,))
     if cursor.rowcount == 1:

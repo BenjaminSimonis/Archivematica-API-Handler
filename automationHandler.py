@@ -1,11 +1,26 @@
-from dbHandler import get_transfer_list, db_exists
+from os import listdir
+
+from constants import EBOOK_SOURCE_PATH, FREIDOK_SOURCE_PATH, RETRO_SOURCE_PATH, INSERT, SOURCE
+from dbHandler import db_handler
 
 
 transfers = {}
 
 
 def get_all_source_folder():
-    pass
+    list_ebook = listdir(EBOOK_SOURCE_PATH)
+    insert_sources(list_ebook)
+    list_retro = listdir(RETRO_SOURCE_PATH)
+    insert_sources(list_retro)
+    list_freidok = listdir(FREIDOK_SOURCE_PATH)
+    insert_sources(list_freidok)
+    return
+
+
+def insert_sources(source_list):
+    for item in source_list:
+        db_handler(SOURCE, INSERT, item)
+    return
 
 
 def start_transfer():
@@ -34,8 +49,8 @@ def write_logs():
 
 
 def init():
-    db_exists()
-    pass
+    get_all_source_folder()
+    return
 
 
 if __name__ == "__main__":
