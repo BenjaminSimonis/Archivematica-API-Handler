@@ -1,60 +1,230 @@
-# API constants
-URL_API = "/api"
-URL_TRANSFER = URL_API + "/transfer"
-URL_INGEST = URL_API + "/ingest"
+class AppConstants:
 
-# General path constants
-WORKING_PATH = "/var/archivematica"
-HANDLER_PATH = WORKING_PATH + "/Archivematica-API-Handler/"
-SOURCE_PATH = WORKING_PATH + "/source"
-EBOOK_SOURCE_PATH = SOURCE_PATH + "/ebooks"
-RETRO_SOURCE_PATH = SOURCE_PATH + "/retro"
-FREIDOK_SOURCE_PATH = SOURCE_PATH + "/freidok"
-DONE_SOURCE_PATH = SOURCE_PATH + "/done"
+    #########################################
+    ########## Init of Properties ###########
+    #########################################
 
-# Processing path constants
-PROCESS_PATH = WORKING_PATH + "/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/"
-PROCESS_DEFAULT = "defaultProcessingMCP.xml"
-PROCESS_AUTOMATED = "automatedProcessingMCP.xml"
-PROCESS_PATH_AUTOMATED = PROCESS_PATH + PROCESS_AUTOMATED
-PROCESS_PATH_DEFAULT = PROCESS_PATH + PROCESS_DEFAULT
-LOCAL_PROCESS_DIR = "processingConfs/"
+    def __init__(self):
+        # API constants
+        self._URL_API = "/api"
+        self._URL_TRANSFER = self._URL_API + "/transfer"
+        self._URL_INGEST = self._URL_API + "/ingest"
 
-# Database constants
-DB_FILE = HANDLER_PATH + "storage.db"
+        # General path constants
+        self._WORKING_PATH = "/var/archivematica"
+        self._HANDLER_PATH = self._WORKING_PATH + "/Archivematica-API-Handler/"
+        self._SOURCE_PATH = self._WORKING_PATH + "/source"
+        self._EBOOK_SOURCE_PATH = self._SOURCE_PATH + "/ebooks"
+        self._RETRO_SOURCE_PATH = self._SOURCE_PATH + "/retro"
+        self._FREIDOK_SOURCE_PATH = self._SOURCE_PATH + "/freidok"
+        self._DONE_SOURCE_PATH = self._SOURCE_PATH + "/done"
 
-CREATE_TRANSFER_TABLE = "CREATE TABLE transfer (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
-                         source INTEGER NOT NULL, tname TEXT NOT NULL, \
-                         acnumber INTEGER, uuid TEXT NOT NULL, status TEXT NOT NULL, \
-                         deletedate INTEGER, procconf TEXT NOT NULL, \
-                         FOREIGN KEY (source) REFERENCES sources(_id));"
+        # Processing path constants
+        self._PROCESS_PATH = self._WORKING_PATH + "/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/"
+        self._PROCESS_DEFAULT = "defaultProcessingMCP.xml"
+        self._PROCESS_AUTOMATED = "automatedProcessingMCP.xml"
+        self._PROCESS_PATH_AUTOMATED = self._PROCESS_PATH + self._PROCESS_AUTOMATED
+        self._PROCESS_PATH_DEFAULT = self._PROCESS_PATH + self._PROCESS_DEFAULT
+        self._LOCAL_PROCESS_DIR = "processingConfs/"
 
-# TODO: Add column for transfer directory/type
-# TODO: Add column timestamp, when source is added to db
-# TODO: Add column ingest_finished
-CREATE_SOURCE_TABLE = "CREATE TABLE sources (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
-                       oname TEXT NOT NULL, transfer_started INTEGER DEFAULT 0);"
+        # Database constants
+        self._DB_FILE = self._HANDLER_PATH + "storage.db"
 
-DELETE_TRANSFER = "DELETE FROM transfer WHERE _id = ?;"
-INSERT_TRANSFER = "INSERT INTO transfer (source,tname,acnumber,uuid,status,procconf)\
-                VALUES (?,?,?,?,?,?);"
-UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE uuid = ?;"
-ALL_TRANSFERS = "SELECT * FROM transfer;"
-ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE uuid = ?;"
-ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
+        self._CREATE_TRANSFER_TABLE = "CREATE TABLE transfer (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
+                                 source INTEGER NOT NULL, tname TEXT NOT NULL, \
+                                 acnumber INTEGER, uuid TEXT NOT NULL, status TEXT NOT NULL, \
+                                 deletedate INTEGER, procconf TEXT NOT NULL, \
+                                 FOREIGN KEY (source) REFERENCES sources(_id));"
 
-DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
-INSERT_SOURCE = "INSERT INTO sources (oname) VALUES (?);"
-UPDATE_STATUS_SOURCE = "UPDATE source SET transfer_started = ? WHERE _id = ?;"
-ALL_SOURCES = "SELECT * FROM sources;"
-ONE_SOURCE_NAME = "SELECT * FROM sources WHERE oname = ?;"
-ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"
+        # TODO: Add column for transfer directory/type
+        # TODO: Add column timestamp, when source is added to db
+        # TODO: Add column ingest_finished
+        self._CREATE_SOURCE_TABLE = "CREATE TABLE sources (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
+                               oname TEXT NOT NULL, transfer_started INTEGER DEFAULT 0);"
 
-# Miscellaneous constants
-SOURCE = "SOURCE"
-TRANSFER = "TRANSFER"
-GET_ALL = "GET_ALL"
-GET_ONE = "GET_ONE"
-INSERT = "INSERT"
-DELETE = "DELETE"
-FAILED = "FAILED"
+        self._DELETE_TRANSFER = "DELETE FROM transfer WHERE _id = ?;"
+        self._INSERT_TRANSFER = "INSERT INTO transfer (source,tname,acnumber,uuid,status,procconf)\
+                        VALUES (?,?,?,?,?,?);"
+        self._UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE uuid = ?;"
+        self._ALL_TRANSFERS = "SELECT * FROM transfer;"
+        self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE uuid = ?;"
+        self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
+
+        self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
+        self._INSERT_SOURCE = "INSERT INTO sources (oname) VALUES (?);"
+        self._UPDATE_STATUS_SOURCE = "UPDATE source SET transfer_started = ? WHERE _id = ?;"
+        self._ALL_SOURCES = "SELECT * FROM sources;"
+        self._ONE_SOURCE_NAME = "SELECT * FROM sources WHERE oname = ?;"
+        self._ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"
+
+        # Miscellaneous constants
+        self._SOURCE = "SOURCE"
+        self._TRANSFER = "TRANSFER"
+        self._GET_ALL = "GET_ALL"
+        self._GET_ONE = "GET_ONE"
+        self._INSERT = "INSERT"
+        self._DELETE = "DELETE"
+        self._FAILED = "FAILED"
+
+
+#########################################
+############## Properties ###############
+#########################################
+
+    # API constants
+
+    @property
+    def URL_TRANSFER(self):
+        return self._URL_TRANSFER
+
+    @property
+    def URL_INGEST(self):
+        return self._URL_INGEST
+
+    # General path constants
+
+    @property
+    def WORKING_PATH(self):
+        return self._WORKING_PATH
+
+    @property
+    def HANDLER_PATH(self):
+        return self._HANDLER_PATH
+
+    @property
+    def SOURCE_PATH(self):
+        return self._SOURCE_PATH
+
+    @property
+    def EBOOK_SOURCE_PATH(self):
+        return self._EBOOK_SOURCE_PATH
+
+    @property
+    def RETRO_SOURCE_PATH(self):
+        return self._RETRO_SOURCE_PATH
+
+    @property
+    def FREIDOK_SOURCE_PATH(self):
+        return self._FREIDOK_SOURCE_PATH
+
+    @property
+    def DONE_SOURCE_PATH(self):
+        return self._DONE_SOURCE_PATH
+
+    # Processing path constants
+
+    @property
+    def PROCESS_PATH(self):
+        return self._PROCESS_PATH
+
+    @property
+    def PROCESS_DEFAULT(self):
+        return self._PROCESS_DEFAULT
+
+    @property
+    def PROCESS_AUTOMATED(self):
+        return self._PROCESS_AUTOMATED
+
+    @property
+    def PROCESS_PATH_AUTOMATED(self):
+        return self._PROCESS_PATH_AUTOMATED
+
+    @property
+    def PROCESS_PATH_DEFAULT(self):
+        return self._PROCESS_PATH_DEFAULT
+
+    @property
+    def LOCAL_PROCESS_DIR(self):
+        return self._LOCAL_PROCESS_DIR
+
+    # Database constants
+
+    @property
+    def DB_FILE(self):
+        return self._DB_FILE
+
+    @property
+    def CREATE_TRANSFER_TABLE(self):
+        return self._CREATE_TRANSFER_TABLE
+
+    @property
+    def CREATE_SOURCE_TABLE(self):
+        return self._CREATE_SOURCE_TABLE
+
+    @property
+    def DELETE_TRANSFER(self):
+        return self._DELETE_TRANSFER
+
+    @property
+    def INSERT_TRANSFER(self):
+        return self._INSERT_TRANSFER
+
+    @property
+    def UPDATE_STATUS_TRANSFER(self):
+        return self._UPDATE_STATUS_TRANSFER
+
+    @property
+    def ALL_TRANSFERS(self):
+        return self._ALL_TRANSFERS
+
+    @property
+    def ONE_TRANSFER_UUID(self):
+        return self._ONE_TRANSFER_UUID
+
+    @property
+    def ONE_TRANSFER_SOURCE_ID(self):
+        return self._ONE_TRANSFER_SOURCE_ID
+
+    @property
+    def DELETE_SOURCE(self):
+        return self._DELETE_SOURCE
+
+    @property
+    def INSERT_SOURCE(self):
+        return self._INSERT_SOURCE
+
+    @property
+    def UPDATE_STATUS_SOURCE(self):
+        return self._UPDATE_STATUS_SOURCE
+
+    @property
+    def ALL_SOURCES(self):
+        return self._ALL_SOURCES
+
+    @property
+    def ONE_SOURCE_NAME(self):
+        return self._ONE_SOURCE_NAME
+
+    @property
+    def ONE_SOURCE_ID(self):
+        return self._ONE_SOURCE_ID
+
+    # Miscellaneous constants
+
+    @property
+    def SOURCE(self):
+        return self._SOURCE
+
+    @property
+    def TRANSFER(self):
+        return self._TRANSFER
+
+    @property
+    def GET_ALL(self):
+        return self._GET_ALL
+
+    @property
+    def GET_ONE(self):
+        return self._GET_ONE
+
+    @property
+    def INSERT(self):
+        return self._INSERT
+
+    @property
+    def DELETE(self):
+        return self._DELETE
+
+    @property
+    def FAILED(self):
+        return self._FAILED

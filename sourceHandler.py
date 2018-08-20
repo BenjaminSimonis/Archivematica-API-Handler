@@ -4,7 +4,7 @@ from apiHandler import completed_ingests
 from datetime import timedelta, datetime
 from os import getcwd, listdir
 from shutil import move, rmtree
-from constants import DONE_SOURCE_PATH
+from constants import AppConstants
 
 
 # Check via API if an Ingest is completed
@@ -21,7 +21,7 @@ def is_ingest_complete(uuid):
 # Move the source of an completed ingest to the done directory
 def move_source_to_done(path, uuid):
     if is_ingest_complete(uuid):
-        move(path, DONE_SOURCE_PATH)
+        move(path, AppConstants.DONE_SOURCE_PATH)
         create_delete_date(path)
     else:
         print("Ingest is not completed")
