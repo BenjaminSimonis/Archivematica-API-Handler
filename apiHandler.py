@@ -6,9 +6,10 @@ import requests
 import os
 from time import sleep
 
-from constants import *
+from constants import AppConstants
 from credentials import *
 import processingHandler
+AppConstants = AppConstants()
 
 ######################################
 ########### Transfer API #############
@@ -21,7 +22,7 @@ import processingHandler
 # Parameters: JSON body
 # Response: JSON
 def start_transfer(name, type, accession, path, procFile):
-    url = URL_TRANSFER + "/start_transfer/"
+    url = str(AppConstants.URL_TRANSFER) + "/start_transfer/"
     print("Starting Transfer")
     dataset = {"name": name, "type": type, "accession": accession, "paths[]": [create_base64_path(path)],
                "row_ids[]": [""]}
@@ -34,7 +35,7 @@ def start_transfer(name, type, accession, path, procFile):
 # Returns a list of transfers waiting for approval.
 # Response: JSON
 def list_unapproved_transfers():
-    url = URL_TRANSFER + "/unapproved"
+    url = str(AppConstants.URL_TRANSFER) + "/unapproved"
     print("Unapproved Transfers")
     return get_request(url)
 
@@ -45,7 +46,7 @@ def list_unapproved_transfers():
 # Parameters: JSON body
 # Response: JSON
 def approve_transfer(type, dir):
-    url = URL_TRANSFER + "/approve"
+    url = str(AppConstants.URL_TRANSFER) + "/approve"
     print("Approve Transfer")
     dataset = {"type": type, "directory": dir}
     return post_request(url, dataset)
@@ -56,7 +57,7 @@ def approve_transfer(type, dir):
 # Returns the status of the transfer.
 # Response: JSON
 def status_transfer(uuid):
-    url = URL_TRANSFER + "/status/" + uuid
+    url = str(AppConstants.URL_TRANSFER) + "/status/" + uuid
     print("Status Transfer: " + uuid)
     get_request(url)
     return
@@ -67,7 +68,7 @@ def status_transfer(uuid):
 # Hide a transfer
 # Response: JSON
 def hide_transfer(uuid):
-    url = URL_TRANSFER + "/" + uuid + "/delete/"
+    url = str(AppConstants.URL_TRANSFER) + "/" + uuid + "/delete/"
     print("Hide Transfer: " + uuid)
     delete_request(url)
     return
@@ -78,7 +79,7 @@ def hide_transfer(uuid):
 # Return list of Transfers that are completed
 # Response: JSON
 def completed_transfers():
-    url = URL_TRANSFER + "/completed/"
+    url = str(AppConstants.URL_TRANSFER) + "/completed/"
     print("Completed Transfers")
     r = get_request(url)
     return r
@@ -94,7 +95,7 @@ def completed_transfers():
 # Returns the status of the SIP
 # Response: JSON
 def status_ingest(uuid):
-    url = URL_INGEST + "/status/" + uuid + "/"
+    url = str(AppConstants.URL_INGEST) + "/status/" + uuid + "/"
     print("Status Ingest: " + uuid)
     get_request(url)
     return
@@ -105,7 +106,7 @@ def status_ingest(uuid):
 # Hide a SIP
 # Response: JSON
 def hide_ingest(uuid):
-    url = URL_INGEST + "/" + uuid + "/delete/"
+    url = str(AppConstants.URL_INGEST) + "/" + uuid + "/delete/"
     print("Hide Ingest: " + uuid)
     delete_request(url)
     return
@@ -116,7 +117,7 @@ def hide_ingest(uuid):
 # Returns a list of SIPs waiting for user input.
 # Response: JSON
 def waiting_for_user_ingests():
-    url = URL_INGEST + "/waiting"
+    url = str(AppConstants.URL_INGEST) + "/waiting"
     print("Ingests waiting for user input")
     get_request(url)
     return
@@ -127,7 +128,7 @@ def waiting_for_user_ingests():
 # Return list of SIPs that are completed
 # Response: JSON
 def completed_ingests():
-    url = URL_INGEST + "/completed/"
+    url = str(AppConstants.URL_INGEST) + "/completed/"
     print("Completed Ingests")
     r = get_request(url)
     return r
@@ -139,7 +140,7 @@ def completed_ingests():
 # Parameters: JSON body
 # Response: JSON
 def start_full_reingest(name, uuid):
-    url = URL_TRANSFER + "/reingest"
+    url = str(AppConstants.URL_TRANSFER) + "/reingest"
     print("Full Re-Ingest")
     dataset = {"name": name, "uuid": uuid}
     post_request(url, dataset)
@@ -152,7 +153,7 @@ def start_full_reingest(name, uuid):
 # Parameters: JSON body
 # Response: JSON
 def start_partial_reingest(name, uuid):
-    url = URL_INGEST + "/reingest"
+    url = str(AppConstants.URL_INGEST) + "/reingest"
     print("Full Re-Ingest")
     dataset = {"name": name, "uuid": uuid}
     post_request(url, dataset)
@@ -198,7 +199,7 @@ def delete_request(path):
 # Encode the path for a package in base64 format
 def create_base64_path(target_path):
     if target_path == "":
-        path = SOURCE_PATH
+        path = str(AppConstants.SOURCE_PATH)
     else:
         path = target_path
     base_path = base64.b64encode(os.fsencode(TS_LOCATION_UUID) + b':' + os.fsencode(path))

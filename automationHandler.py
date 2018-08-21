@@ -1,25 +1,25 @@
 from os import listdir
 
-from constants import EBOOK_SOURCE_PATH, FREIDOK_SOURCE_PATH, RETRO_SOURCE_PATH, INSERT, SOURCE
+from constants import AppConstants
 from dbHandler import db_handler
 
-
+AppConstants = AppConstants()
 transfers = {}
 
 
 def get_all_source_folder():
-    list_ebook = listdir(EBOOK_SOURCE_PATH)
+    list_ebook = listdir(str(AppConstants.EBOOK_SOURCE_PATH))
     insert_sources(list_ebook)
-    list_retro = listdir(RETRO_SOURCE_PATH)
+    list_retro = listdir(str(AppConstants.RETRO_SOURCE_PATH))
     insert_sources(list_retro)
-    list_freidok = listdir(FREIDOK_SOURCE_PATH)
+    list_freidok = listdir(str(AppConstants.FREIDOK_SOURCE_PATH))
     insert_sources(list_freidok)
     return
 
 
 def insert_sources(source_list):
     for item in source_list:
-        db_handler(SOURCE, INSERT, item)
+        db_handler(AppConstants.SOURCE, AppConstants.INSERT, item)
     return
 
 
