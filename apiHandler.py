@@ -59,8 +59,8 @@ def approve_transfer(type, dir):
 def status_transfer(uuid):
     url = str(AppConstants.URL_TRANSFER) + "/status/" + uuid
     print("Status Transfer: " + uuid)
-    get_request(url)
-    return
+    r = get_request(url)
+    return r
 
 
 # URL: /api/transfer/<transfer UUID>/delete/
@@ -97,8 +97,8 @@ def completed_transfers():
 def status_ingest(uuid):
     url = str(AppConstants.URL_INGEST) + "/status/" + uuid + "/"
     print("Status Ingest: " + uuid)
-    get_request(url)
-    return
+    r = get_request(url)
+    return r
 
 
 # URL: /api/ingest/<SIP UUID>/delete/

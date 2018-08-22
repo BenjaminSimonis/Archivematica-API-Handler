@@ -1,5 +1,6 @@
 from os import listdir
 
+from apiHandler import status_transfer, status_ingest, start_transfer
 from constants import AppConstants
 from dbHandler import db_handler
 
@@ -23,11 +24,19 @@ def insert_sources(source_list):
     return
 
 
-def start_transfer():
+def start_transfer_auto(name, type, accession, path, procFile):
+    status_transfer(name, type, accession, path, procFile)
     pass
 
 
 def restart_transfer():
+    pass
+
+
+def check_transfer(uuid):
+    status = status_transfer(uuid) and status_ingest(uuid)
+    if status == AppConstants.FAILED:
+        restart_transfer()
     pass
 
 
