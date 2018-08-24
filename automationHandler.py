@@ -18,6 +18,12 @@ def get_all_source_folder():
     return
 
 
+def get_all_transfers_ingests():
+    t_list = db_handler(AppConstants.TRANSFER, AppConstants.GET_ALL)
+    print(t_list)
+    return
+
+
 def insert_sources(source_list):
     for item in source_list:
         db_handler(AppConstants.SOURCE, AppConstants.INSERT, item)
@@ -63,9 +69,10 @@ def init():
 
 
 if __name__ == "__main__":
-    init()
-    while True:
-        refresh_transfer_list()
-        start_transfer()
-        # Do Stuff
-        pass
+    get_all_transfers_ingests()
+    #init()
+    #while True:
+    #    refresh_transfer_list()
+    #    start_transfer_auto()
+    #    # Do Stuff
+    #    pass

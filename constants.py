@@ -27,6 +27,19 @@ class AppConstants:
         self._PROCESS_PATH_DEFAULT = self._PROCESS_PATH + self._PROCESS_DEFAULT
         self._LOCAL_PROCESS_DIR = "processingConfs/"
 
+        # Miscellaneous constants
+        self._SOURCE = "SOURCE"
+        self._TRANSFER = "TRANSFER"
+        self._GET_ALL = "GET_ALL"
+        self._GET_ONE = "GET_ONE"
+        self._INSERT = "INSERT"
+        self._DELETE = "DELETE"
+        self._FAILED = "FAILED"
+        self._REJECTED = "REJECTED"
+        self._USER_INPUT = "USER_INPUT"
+        self._COMPLETE = "COMPLETE"
+        self._PROCESSING = "PROCESSING"
+
         # Database constants
         self._DB_FILE = self._HANDLER_PATH + "storage.db"
 
@@ -42,29 +55,23 @@ class AppConstants:
         self._CREATE_SOURCE_TABLE = "CREATE TABLE sources (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
                                oname TEXT NOT NULL, transfer_started INTEGER DEFAULT 0);"
 
+        # Transfer Table Queries
         self._DELETE_TRANSFER = "DELETE FROM transfer WHERE _id = ?;"
         self._INSERT_TRANSFER = "INSERT INTO transfer (source,tname,acnumber,uuid,status,procconf)\
                         VALUES (?,?,?,?,?,?);"
         self._UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE uuid = ?;"
         self._ALL_TRANSFERS = "SELECT * FROM transfer;"
+        self._ALL_PROCESSING_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE uuid = ?;"
         self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
 
+        # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
         self._INSERT_SOURCE = "INSERT INTO sources (oname) VALUES (?);"
         self._UPDATE_STATUS_SOURCE = "UPDATE source SET transfer_started = ? WHERE _id = ?;"
         self._ALL_SOURCES = "SELECT * FROM sources;"
         self._ONE_SOURCE_NAME = "SELECT * FROM sources WHERE oname = ?;"
         self._ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"
-
-        # Miscellaneous constants
-        self._SOURCE = "SOURCE"
-        self._TRANSFER = "TRANSFER"
-        self._GET_ALL = "GET_ALL"
-        self._GET_ONE = "GET_ONE"
-        self._INSERT = "INSERT"
-        self._DELETE = "DELETE"
-        self._FAILED = "FAILED"
 
 
 #########################################
@@ -168,6 +175,10 @@ class AppConstants:
         return self._ALL_TRANSFERS
 
     @property
+    def ALL_PROCESSING_TRANSFERS(self):
+        return self._ALL_PROCESSING_TRANSFERS
+
+    @property
     def ONE_TRANSFER_UUID(self):
         return self._ONE_TRANSFER_UUID
 
@@ -228,3 +239,19 @@ class AppConstants:
     @property
     def FAILED(self):
         return self._FAILED
+
+    @property
+    def REJECTED(self):
+        return self._REJECTED
+
+    @property
+    def USER_INPUT(self):
+        return self._USER_INPUT
+
+    @property
+    def COMPLETE(self):
+        return self._COMPLETE
+
+    @property
+    def PROCESSING(self):
+        return self._PROCESSING

@@ -8,6 +8,7 @@ AppConstants = AppConstants()
 
 # TODO: Replace Exceptions with ErrorLogEntries and try again routine
 # TODO: Write Successful Updates, Inserts, etc. in a DebugLog
+# TODO: All Ingests and Transfers are Transfers in DB
 
 ################################################################
 # Handler for interactions with other classes
