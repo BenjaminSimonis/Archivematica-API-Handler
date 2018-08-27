@@ -63,6 +63,7 @@ def source_handler(cursor, method, p_list):
     return answer
 
 
+# TODO: Resolve Recursion in create_db_connection(), db_exists(), create_db()
 ##################################
 # Methods for the database itself
 ##################################
@@ -79,7 +80,7 @@ def db_exists():
 
 
 def create_db():
-    conn = create_db_connection()
+    conn = sqlite3.connect(str(AppConstants.DB_FILE))
     cursor = conn.cursor()
     cursor.execute(str(AppConstants.CREATE_SOURCE_TABLE))
     cursor.execute(str(AppConstants.CREATE_TRANSFER_TABLE))
