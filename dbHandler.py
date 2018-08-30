@@ -63,7 +63,6 @@ def source_handler(cursor, method, p_list):
     return answer
 
 
-# TODO: Resolve Recursion in create_db_connection(), db_exists(), create_db()
 ##################################
 # Methods for the database itself
 ##################################

@@ -9,22 +9,18 @@ transfers = {}
 
 
 def get_all_source_folder():
-    list_ebook = listdir(str(AppConstants.EBOOK_SOURCE_PATH))
-    insert_sources(list_ebook)
-    list_retro = listdir(str(AppConstants.RETRO_SOURCE_PATH))
-    insert_sources(list_retro)
-    list_freidok = listdir(str(AppConstants.FREIDOK_SOURCE_PATH))
-    insert_sources(list_freidok)
-    return
+    source_list = {str(AppConstants.EBOOK): listdir(str(AppConstants.EBOOK_SOURCE_PATH)),
+                   str(AppConstants.RETRO): listdir(str(AppConstants.RETRO_SOURCE_PATH)),
+                   str(AppConstants.FREIDOK): listdir(str(AppConstants.FREIDOK_SOURCE_PATH))}
+    return source_list
 
 
-def get_all_transfers_ingests():
+def get_all_transfers_ingests_db():
     t_list = db_handler(AppConstants.TRANSFER, AppConstants.GET_ALL)
-    print(t_list)
-    return
+    return t_list
 
 
-def insert_sources(source_list):
+def insert_sources_db(source_list):
     for item in source_list:
         db_handler(AppConstants.SOURCE, AppConstants.INSERT, item)
     return
@@ -35,18 +31,18 @@ def start_transfer_auto(name, type, accession, path, procFile):
     pass
 
 
-def restart_transfer():
+def restart_transfer_api_db():
     pass
 
 
-def check_transfer(uuid):
+def check_transfer_api(uuid):
     status = status_transfer(uuid) and status_ingest(uuid)
     if status == AppConstants.FAILED:
-        restart_transfer()
+        restart_transfer_api_db()
     pass
 
 
-def refresh_transfer_list():
+def refresh_transfer_list_db():
     pass
 
 
@@ -63,16 +59,42 @@ def write_logs():
     pass
 
 
+def get_source_from_db():
+    source_list_db = db_handler(AppConstants.SOURCE, AppConstants.GET_ALL)
+    return source_list_db
+
+
+def compare_source_db(list_source, list_db):
+    #TODO: compare source list with DB and refresh DB entries for sources
+    refresh_source_db()
+    pass
+
+
+def refresh_source_db():
+    pass
+
+
+def get_transfer_db():
+    pass
+
+
+def get_transfer_api():
+    pass
+
+
 def init():
-    get_all_source_folder()
+    list_db = get_source_from_db()
+    list_source = get_all_source_folder()
+    compare_source_db(list_source, list_db)
+    get_transfer_db()
+    get_transfer_api()
     return
 
 
 if __name__ == "__main__":
-    get_all_transfers_ingests()
-    #init()
-    #while True:
-    #    refresh_transfer_list()
-    #    start_transfer_auto()
-    #    # Do Stuff
-    #    pass
+    init()
+    while True:
+        refresh_transfer_list_db()
+        start_transfer_auto()
+        # Do Stuff
+        pass

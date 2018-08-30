@@ -39,6 +39,9 @@ class AppConstants:
         self._USER_INPUT = "USER_INPUT"
         self._COMPLETE = "COMPLETE"
         self._PROCESSING = "PROCESSING"
+        self._EBOOK = "EBOOK"
+        self._RETRO = "RETRO"
+        self._FREIDOK = "FREIDOK"
 
         # Database constants
         self._DB_FILE = self._HANDLER_PATH + "storage.db"
@@ -255,3 +258,15 @@ class AppConstants:
     @property
     def PROCESSING(self):
         return self._PROCESSING
+
+    @property
+    def EBOOK(self):
+        return self._EBOOK
+
+    @property
+    def RETRO(self):
+        self._RETRO
+
+    @property
+    def FREIDOK(self):
+        self._FREIDOK
