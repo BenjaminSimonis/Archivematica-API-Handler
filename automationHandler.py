@@ -8,6 +8,7 @@ AppConstants = AppConstants()
 transfers = {}
 
 
+# source_list = {"EBOOK" : [], "RETRO" : [], "FREIDOK" : []}
 def get_all_source_folder():
     source_list = {str(AppConstants.EBOOK): listdir(str(AppConstants.EBOOK_SOURCE_PATH)),
                    str(AppConstants.RETRO): listdir(str(AppConstants.RETRO_SOURCE_PATH)),
@@ -26,12 +27,14 @@ def insert_sources_db(source_list):
     return
 
 
-def start_transfer_auto(name, type, accession, path, procFile):
-    status_transfer(name, type, accession, path, procFile)
+def start_transfer_auto(name, type, accession, path):
+    start_transfer(name, type, accession, path, str(AppConstants.PROCESS_AUTOMATED))
     pass
 
 
 def restart_transfer_api_db():
+    start_transfer()
+    db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER)
     pass
 
 
@@ -55,7 +58,7 @@ def clean_db():
     pass
 
 
-def write_logs():
+def write_logs(message, log_type):
     pass
 
 
@@ -65,16 +68,26 @@ def get_source_from_db():
 
 
 def compare_source_db(list_source, list_db):
-    #TODO: compare source list with DB and refresh DB entries for sources
-    refresh_source_db()
+    list_new_source = {}
+    for key, value in list_source.items():
+        if value not in list_db:
+            list_new_source[key] = value
+    refresh_source_db(list_new_source)
     pass
 
 
-def refresh_source_db():
-    pass
+def refresh_source_db(list_new_source):
+    for key, value in list_new_source:
+        success = db_handler(AppConstants.SOURCE, AppConstants.INSERT, value, key)
+        if success:
+            write_logs("Insert in DB from " + key + "/" + value + "was successful", "[INFO]")
+        else:
+            write_logs(key + "/" + value + " already exist in DB", "[ERROR]")
+    return
 
 
 def get_transfer_db():
+    #TODO NEXT
     pass
 
 

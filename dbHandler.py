@@ -3,12 +3,15 @@ from constants import AppConstants
 import os.path
 import sqlite3
 
+from datetime import datetime
+
 AppConstants = AppConstants()
 
 
 # TODO: Replace Exceptions with ErrorLogEntries and try again routine
 # TODO: Write Successful Updates, Inserts, etc. in a DebugLog
 # TODO: All Ingests and Transfers are Transfers in DB
+# TODO: update Functions
 
 ################################################################
 # Handler for interactions with other classes
@@ -168,7 +171,7 @@ def delete_source(cursor, source_id):
 # Returns true, when insert was successful. returns false, when insert already exists
 def insert_source(cursor, oname):
     if get_source(cursor, oname) is None:
-        cursor.execute(AppConstants.INSERT_SOURCE, oname[0])
+        cursor.execute(AppConstants.INSERT_SOURCE, (oname[0], oname[1], datetime.now()))
         if cursor.rowcount == 1:
             return True
         else:

@@ -52,11 +52,11 @@ class AppConstants:
                                  deletedate INTEGER, procconf TEXT NOT NULL, \
                                  FOREIGN KEY (source) REFERENCES sources(_id));"
 
-        # TODO: Add column for transfer directory/type
         # TODO: Add column timestamp, when source is added to db
         # TODO: Add column ingest_finished
         self._CREATE_SOURCE_TABLE = "CREATE TABLE sources (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
-                               oname TEXT NOT NULL, transfer_started INTEGER DEFAULT 0);"
+                                oname TEXT NOT NULL, type TEXT NOT NULL, inserted timestamp NOT NULL \
+                                transfer_started INTEGER DEFAULT 0, started timestamp);"
 
         # Transfer Table Queries
         self._DELETE_TRANSFER = "DELETE FROM transfer WHERE _id = ?;"
@@ -70,7 +70,7 @@ class AppConstants:
 
         # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
-        self._INSERT_SOURCE = "INSERT INTO sources (oname) VALUES (?);"
+        self._INSERT_SOURCE = "INSERT INTO sources (oname,type,inserted) VALUES (?,?,?);"
         self._UPDATE_STATUS_SOURCE = "UPDATE source SET transfer_started = ? WHERE _id = ?;"
         self._ALL_SOURCES = "SELECT * FROM sources;"
         self._ONE_SOURCE_NAME = "SELECT * FROM sources WHERE oname = ?;"
@@ -265,8 +265,8 @@ class AppConstants:
 
     @property
     def RETRO(self):
-        self._RETRO
+        return self._RETRO
 
     @property
     def FREIDOK(self):
-        self._FREIDOK
+        return self._FREIDOK
