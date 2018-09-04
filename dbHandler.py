@@ -86,6 +86,7 @@ def create_db():
     cursor = conn.cursor()
     cursor.execute(str(AppConstants.CREATE_SOURCE_TABLE))
     cursor.execute(str(AppConstants.CREATE_TRANSFER_TABLE))
+    conn.commit()
     conn.close()
     return
 

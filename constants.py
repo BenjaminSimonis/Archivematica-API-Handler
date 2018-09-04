@@ -56,7 +56,7 @@ class AppConstants:
         # TODO: Add column timestamp, when source is added to db
         # TODO: Add column ingest_finished
         self._CREATE_SOURCE_TABLE = "CREATE TABLE sources (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
-                                oname TEXT NOT NULL, type TEXT NOT NULL, inserted timestamp NOT NULL \
+                                oname TEXT NOT NULL, type TEXT NOT NULL, inserted timestamp NOT NULL, \
                                 transfer_started INTEGER DEFAULT 0, started timestamp);"
 
         # Transfer Table Queries
