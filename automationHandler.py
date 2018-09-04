@@ -46,7 +46,11 @@ def check_transfer_api(uuid):
 
 
 def refresh_transfer_list_db():
-    pass
+    db_list = get_transfer_db()
+    api_list = get_transfer_api()
+    print(db_list)
+    print(api_list)
+    return
 
 
 def check_delete_dates():
@@ -87,20 +91,22 @@ def refresh_source_db(list_new_source):
 
 
 def get_transfer_db():
-    #TODO NEXT
-    pass
+    return db_handler(AppConstants.TRANSFER, AppConstants.GET_ALL)
 
 
-def get_transfer_api():
-    pass
+def get_transfer_api(uuids):
+    status = {}
+    for uuid in uuids:
+        status[str(AppConstants.TRANSFER) + "-" + uuid] = status_transfer(uuid)
+        status[str(AppConstants.INGEST) + "-" + uuid] = status_ingest(uuid)
+    return status
 
 
 def init():
     list_db = get_source_from_db()
     list_source = get_all_source_folder()
     compare_source_db(list_source, list_db)
-    get_transfer_db()
-    get_transfer_api()
+    refresh_transfer_list_db()
     return
 
 

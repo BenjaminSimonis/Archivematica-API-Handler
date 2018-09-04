@@ -30,6 +30,7 @@ class AppConstants:
         # Miscellaneous constants
         self._SOURCE = "SOURCE"
         self._TRANSFER = "TRANSFER"
+        self._INGEST = "INGEST"
         self._GET_ALL = "GET_ALL"
         self._GET_ONE = "GET_ONE"
         self._INSERT = "INSERT"
@@ -222,6 +223,10 @@ class AppConstants:
     @property
     def TRANSFER(self):
         return self._TRANSFER
+
+    @property
+    def INGEST(self):
+        return self._INGEST
 
     @property
     def GET_ALL(self):
