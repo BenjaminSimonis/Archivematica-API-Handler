@@ -119,6 +119,6 @@ if __name__ == "__main__":
     init()
     while True:
         refresh_transfer_list_db()
-        start_transfer_auto()
+        #start_transfer_auto()
         # Do Stuff
         pass
