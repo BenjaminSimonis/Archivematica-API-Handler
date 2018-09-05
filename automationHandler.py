@@ -47,9 +47,12 @@ def check_transfer_api(uuid):
 
 def refresh_transfer_list_db():
     db_list = get_transfer_db()
-    api_list = get_transfer_api()
     print(db_list)
-    print(api_list)
+    if len(db_list) > 0:
+        api_list = get_transfer_api(db_list[0])
+        print(api_list)
+    else:
+        print("No Transfer in DB.")
     return
 
 
@@ -86,7 +89,7 @@ def refresh_source_db(list_new_source):
         for value in list_new_source[key]:
             success = db_handler(AppConstants.SOURCE, AppConstants.INSERT, value, key)
             if success:
-                write_logs("Insert in DB from " + key + "/" + value + "was successful", "[INFO]")
+                write_logs("Insert in DB from " + key + "/" + value + " was successful", "[INFO]")
             else:
                 write_logs(key + "/" + value + " already exist in DB", "[ERROR]")
     return

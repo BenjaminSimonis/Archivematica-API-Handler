@@ -95,19 +95,19 @@ def create_db():
 # Methods for the transfer table
 ##################################
 def get_transfer_list(cursor):
-    cursor.execute(AppConstants.ALL_TRANSFERS)
+    cursor.execute(str(AppConstants.ALL_TRANSFERS))
     t_list = cursor.fetchall()
     return t_list
 
 
 def get_transfer(cursor, uuid):
-    cursor.execute(AppConstants.ONE_TRANSFER_UUID, uuid)
+    cursor.execute(str(AppConstants.ONE_TRANSFER_UUID), (uuid,))
     transfer = cursor.fetchone()
     return transfer
 
 
 def delete_transfer(cursor, transfer_id):
-    cursor.execute(AppConstants.DELETE_TRANSFER, transfer_id)
+    cursor.execute(str(AppConstants.DELETE_TRANSFER), (transfer_id,))
     if cursor.rowcount == 1:
         return True
     else:
@@ -116,7 +116,7 @@ def delete_transfer(cursor, transfer_id):
 
 # Returns True, if no transfer already exists. Otherwise it returns the transfer ID
 def exist_transfer(cursor, source_id):
-    cursor.execute(AppConstants.ONE_TRANSFER_SOURCE_ID, source_id)
+    cursor.execute(str(AppConstants.ONE_TRANSFER_SOURCE_ID), (source_id,))
     transfer = cursor.fetchone()
     if transfer is not None:
         return transfer[0]
@@ -127,7 +127,7 @@ def exist_transfer(cursor, source_id):
 # Params: sourceID, transfername, accessionnumber, uuid, status, processingconf
 def insert_transfer(cursor, params):
     if exist_transfer(cursor, params[0]):
-        cursor.execute(AppConstants.INSERT_TRANSFER, params)
+        cursor.execute(str(AppConstants.INSERT_TRANSFER), (params,))
         if cursor.rowcount == 1:
             if update_source_started(cursor, params[0], 1):
                 return True
@@ -136,7 +136,7 @@ def insert_transfer(cursor, params):
 
 # Updates the transfer status in transfer table and make rollback in sources if failed
 def update_transfer_status(cursor, status, uuid):
-    cursor.execute(AppConstants.UPDATE_STATUS_TRANSFER, (status, uuid))
+    cursor.execute(str(AppConstants.UPDATE_STATUS_TRANSFER), (status, uuid,))
     if status == AppConstants.FAILED:
         update_source_started(cursor, get_transfer(cursor, uuid)[1], -1)
     if cursor.rowcount == 1:
@@ -149,20 +149,20 @@ def update_transfer_status(cursor, status, uuid):
 # Methods for the source table
 ################################
 def get_source_list(cursor):
-    cursor.execute(AppConstants.ALL_SOURCES)
+    cursor.execute(str(AppConstants.ALL_SOURCES))
     s_list = cursor.fetchall()
     return s_list
 
 
 def get_source(cursor, oname):
-    cursor.execute(AppConstants.ONE_SOURCE_NAME, oname[0])
+    cursor.execute(str(AppConstants.ONE_SOURCE_NAME), (oname[0],))
     source = cursor.fetchone()
     return source
 
 
 # Items, that will be deleted, have to be checked before calling this method
 def delete_source(cursor, source_id):
-    cursor.execute(AppConstants.DELETE_SOURCE, source_id[0])
+    cursor.execute(str(AppConstants.DELETE_SOURCE), (source_id[0],))
     if cursor.rowcount == 1:
         return True
     else:
@@ -172,7 +172,7 @@ def delete_source(cursor, source_id):
 # Returns true, when insert was successful. returns false, when insert already exists
 def insert_source(cursor, oname):
     if get_source(cursor, oname) is None:
-        cursor.execute(AppConstants.INSERT_SOURCE, (oname[0], oname[1], datetime.now()))
+        cursor.execute(str(AppConstants.INSERT_SOURCE), (oname[0], oname[1], datetime.now(),))
         if cursor.rowcount == 1:
             return True
         else:
@@ -183,7 +183,7 @@ def insert_source(cursor, oname):
 
 # First check the started status, then make a update. Otherwise return false
 def update_source_started(cursor, source_id, started):
-    cursor.execute(AppConstants.UPDATE_STATUS_SOURCE, (source_id, started,))
+    cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (source_id, started,))
     if cursor.rowcount == 1:
         return True
     else:
