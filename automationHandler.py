@@ -58,11 +58,12 @@ def check_delete_dates():
 
 
 def clean_db():
-    write_logs()
+    write_logs("Cleaned DB", "[INFO]")
     pass
 
 
 def write_logs(message, log_type):
+    print(log_type + " " + message)
     pass
 
 
@@ -81,12 +82,13 @@ def compare_source_db(list_source, list_db):
 
 
 def refresh_source_db(list_new_source):
-    for key, value in list_new_source:
-        success = db_handler(AppConstants.SOURCE, AppConstants.INSERT, value, key)
-        if success:
-            write_logs("Insert in DB from " + key + "/" + value + "was successful", "[INFO]")
-        else:
-            write_logs(key + "/" + value + " already exist in DB", "[ERROR]")
+    for key in list_new_source:
+        for value in list_new_source[key]:
+            success = db_handler(AppConstants.SOURCE, AppConstants.INSERT, value, key)
+            if success:
+                write_logs("Insert in DB from " + key + "/" + value + "was successful", "[INFO]")
+            else:
+                write_logs(key + "/" + value + " already exist in DB", "[ERROR]")
     return
 
 
