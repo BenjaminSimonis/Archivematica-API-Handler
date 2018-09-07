@@ -1,4 +1,5 @@
 from os import listdir
+from time import sleep
 
 from apiHandler import status_transfer, status_ingest, start_transfer
 from constants import AppConstants
@@ -45,10 +46,14 @@ def check_transfer_api(uuid):
     pass
 
 
+# TODO: When db_list has entries, check for updates from API. Ignore all finished Ingests in db_list.
+# TODO: Implement delete routine for new finished items from DB after check with API
+# TODO: Return list of startable source items
 def refresh_transfer_list_db():
     db_list = get_transfer_db()
     print(db_list)
     if len(db_list) > 0:
+        # TODO: Check output of db list and look for entries in transfer db
         api_list = get_transfer_api(db_list[0])
         print(api_list)
     else:
@@ -118,7 +123,9 @@ def init():
 if __name__ == "__main__":
     init()
     while True:
-        refresh_transfer_list_db()
+        # TODO: When 1 or 0 Transfers/Ingests are Processing, start new Transfer from unstarted sources
         #start_transfer_auto()
+        refresh_transfer_list_db()
         # Do Stuff
+        sleep(5)
         pass

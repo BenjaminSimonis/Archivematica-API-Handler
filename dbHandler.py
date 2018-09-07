@@ -27,7 +27,6 @@ def db_handler(db_type, method, *params):
         answer = transfer_handler(cursor, method, params)
     else:
         raise Exception('\"' + db_type + '\" is not a supported type!')
-    print(method)
     if (method is AppConstants.GET_ALL) or (method is AppConstants.GET_ONE):
         conn.close()
         return answer
