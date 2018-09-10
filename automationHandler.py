@@ -123,11 +123,17 @@ def init():
     return
 
 
+def update_source(id):
+    return db_handler(AppConstants.SOURCE, AppConstants.UPDATE_STATUS_SOURCE, id)
+
+
 def start_transfer_auto():
     if len(get_active_transfers_db()) < 2:
         new_ingest = get_unstarted_source_from_db()
         # TODO: Check Params and make new fields in source table if necessary for starting a new transfer
-        start_transfer(new_ingest[1],new_ingest[2])
+        start_transfer(new_ingest[1], new_ingest[2], )
+        if update_source(new_ingest[0]):
+            write_logs("Update source was successful", "[INFO]")
         #refresh_transfer_list_db()
     else:
         sleep(5)

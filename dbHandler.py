@@ -63,6 +63,8 @@ def source_handler(cursor, method, p_list):
         answer = get_unstarted_source(cursor)
     elif method == AppConstants.INSERT:
         answer = insert_source(cursor, p_list)
+    elif method == AppConstants.UPDATE_STATUS_SOURCE:
+        answer = update_status_source(cursor, p_list)
     elif method == AppConstants.DELETE:
         answer = delete_source(cursor, p_list)
     else:
@@ -179,6 +181,14 @@ def get_unstarted_source(cursor):
 # Items, that will be deleted, have to be checked before calling this method
 def delete_source(cursor, source_id):
     cursor.execute(str(AppConstants.DELETE_SOURCE), (source_id[0],))
+    if cursor.rowcount == 1:
+        return True
+    else:
+        raise Exception("delete_source:\nSomething went wrong: Rowcount = " + cursor.rowcount)
+
+
+def update_status_source(cursor, p_list):
+    cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (1, p_list[0],))
     if cursor.rowcount == 1:
         return True
     else:
