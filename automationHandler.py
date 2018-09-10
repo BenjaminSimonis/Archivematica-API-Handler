@@ -28,11 +28,6 @@ def insert_sources_db(source_list):
     return
 
 
-def start_transfer_auto(name, type, accession, path):
-    start_transfer(name, type, accession, path, str(AppConstants.PROCESS_AUTOMATED))
-    pass
-
-
 def restart_transfer_api_db():
     start_transfer()
     db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER)
@@ -54,6 +49,7 @@ def refresh_transfer_list_db():
     print(db_list)
     if len(db_list) > 0:
         # TODO: Check output of db list and look for entries in transfer db
+
         api_list = get_transfer_api(db_list[0])
         print(api_list)
     else:
@@ -76,8 +72,11 @@ def write_logs(message, log_type):
 
 
 def get_source_from_db():
-    source_list_db = db_handler(AppConstants.SOURCE, AppConstants.GET_ALL)
-    return source_list_db
+    return db_handler(AppConstants.SOURCE, AppConstants.GET_ALL)
+
+
+def get_unstarted_source_from_db():
+    return db_handler(AppConstants.SOURCE, AppConstants.GET_UNSTARTED)
 
 
 def compare_source_db(list_source, list_db):
@@ -104,6 +103,10 @@ def get_transfer_db():
     return db_handler(AppConstants.TRANSFER, AppConstants.GET_ALL)
 
 
+def get_active_transfers_db():
+    return db_handler(AppConstants.TRANSFER, AppConstants.GET_ACTIVE)
+
+
 def get_transfer_api(uuids):
     status = {}
     for uuid in uuids:
@@ -120,12 +123,21 @@ def init():
     return
 
 
+def start_transfer_auto():
+    if len(get_active_transfers_db()) < 2:
+        new_ingest = get_unstarted_source_from_db()
+        # TODO: Check Params and make new fields in source table if necessary for starting a new transfer
+        start_transfer(new_ingest[1],new_ingest[2])
+        #refresh_transfer_list_db()
+    else:
+        sleep(5)
+        #refresh_transfer_list_db()
+
+    pass
+
+
 if __name__ == "__main__":
     init()
     while True:
-        # TODO: When 1 or 0 Transfers/Ingests are Processing, start new Transfer from unstarted sources
-        #start_transfer_auto()
-        refresh_transfer_list_db()
-        # Do Stuff
-        sleep(5)
-        pass
+        start_transfer_auto()
+    pass

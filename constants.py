@@ -33,6 +33,8 @@ class AppConstants:
         self._INGEST = "INGEST"
         self._GET_ALL = "GET_ALL"
         self._GET_ONE = "GET_ONE"
+        self._GET_ACTIVE = "GET_ACTIVE"
+        self._GET_UNSTARTED = "GET_UNSTARTED"
         self._INSERT = "INSERT"
         self._DELETE = "DELETE"
         self._FAILED = "FAILED"
@@ -68,6 +70,7 @@ class AppConstants:
         self._ALL_PROCESSING_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE uuid = ?;"
         self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
+        self._ACTIVE_TRANSFERS = "SELECT * FROM transfer WHERE status = " + self.PROCESSING + ";"
 
         # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
@@ -76,6 +79,7 @@ class AppConstants:
         self._ALL_SOURCES = "SELECT * FROM sources;"
         self._ONE_SOURCE_NAME = "SELECT * FROM sources WHERE oname = ?;"
         self._ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"
+        self._UNSTARTED_SOURCE = "SELECT * FROM sources WHERE transfer_started = 0;"
 
 
 #########################################
@@ -191,6 +195,10 @@ class AppConstants:
         return self._ONE_TRANSFER_SOURCE_ID
 
     @property
+    def ACTIVE_TRANSFERS(self):
+        return self._ACTIVE_TRANSFERS
+
+    @property
     def DELETE_SOURCE(self):
         return self._DELETE_SOURCE
 
@@ -214,6 +222,10 @@ class AppConstants:
     def ONE_SOURCE_ID(self):
         return self._ONE_SOURCE_ID
 
+    @property
+    def UNSTARTED_SOURCE(self):
+        return self._UNSTARTED_SOURCE
+
     # Miscellaneous constants
 
     @property
@@ -235,6 +247,14 @@ class AppConstants:
     @property
     def GET_ONE(self):
         return self._GET_ONE
+
+    @property
+    def GET_ACTIVE(self):
+        return self._GET_ACTIVE
+
+    @property
+    def GET_UNSTARTED(self):
+        return self._GET_UNSTARTED
 
     @property
     def INSERT(self):

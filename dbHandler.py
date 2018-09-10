@@ -43,6 +43,8 @@ def transfer_handler(cursor, method, p_list):
         answer = get_transfer_list(cursor)
     elif method == AppConstants.GET_ONE:
         answer = get_transfer(cursor, p_list)
+    elif method == AppConstants.GET_ACTIVE:
+        answer = get_active_transfers(cursor)
     elif method == AppConstants.INSERT:
         answer = insert_transfer(cursor, p_list)
     elif method == AppConstants.DELETE:
@@ -57,6 +59,8 @@ def source_handler(cursor, method, p_list):
         answer = get_source_list(cursor)
     elif method == AppConstants.GET_ONE:
         answer = get_source(cursor, p_list)
+    elif method == AppConstants.GET_UNSTARTED:
+        answer = get_unstarted_source(cursor)
     elif method == AppConstants.INSERT:
         answer = insert_source(cursor, p_list)
     elif method == AppConstants.DELETE:
@@ -104,6 +108,12 @@ def get_transfer(cursor, uuid):
     cursor.execute(str(AppConstants.ONE_TRANSFER_UUID), (uuid,))
     transfer = cursor.fetchone()
     return transfer
+
+
+def get_active_transfers(cursor):
+    cursor.execute(str(AppConstants.ACTIVE_TRANSFERS))
+    active_list = cursor.fetchall()
+    return active_list
 
 
 def delete_transfer(cursor, transfer_id):
@@ -156,6 +166,12 @@ def get_source_list(cursor):
 
 def get_source(cursor, oname):
     cursor.execute(str(AppConstants.ONE_SOURCE_NAME), (oname[0],))
+    source = cursor.fetchone()
+    return source
+
+
+def get_unstarted_source(cursor):
+    cursor.execute(str(AppConstants.UNSTARTED_SOURCE))
     source = cursor.fetchone()
     return source
 
