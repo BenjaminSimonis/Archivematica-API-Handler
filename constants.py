@@ -70,7 +70,7 @@ class AppConstants:
         self._ALL_PROCESSING_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE uuid = ?;"
         self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
-        self._ACTIVE_TRANSFERS = "SELECT * FROM transfer WHERE status = " + self.PROCESSING + ";"
+        self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
 
         # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
