@@ -131,7 +131,9 @@ def start_transfer_auto():
     if len(get_active_transfers_db()) < 2:
         new_ingest = get_unstarted_source_from_db()
         # TODO: Check Params and make new fields in source table if necessary for starting a new transfer
-        start_transfer(new_ingest[1], new_ingest[2], )
+        # def start_transfer(name, type, accession, path, procFile):
+        start_transfer(new_ingest[1], new_ingest[2], new_ingest[0],
+                       (str(AppConstants.SOURCE_DICT[new_ingest[2]]) + new_ingest[1]), AppConstants.PROCESS_AUTOMATED)
         if update_source(new_ingest[0]):
             write_logs("Update source was successful", "[INFO]")
         #refresh_transfer_list_db()

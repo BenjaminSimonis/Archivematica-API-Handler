@@ -81,6 +81,10 @@ class AppConstants:
         self._ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"
         self._UNSTARTED_SOURCE = "SELECT * FROM sources WHERE transfer_started = 0;"
 
+        # Dict Constants
+        self._SOURCE_DICT = {str(self.FREIDOK): str(self.FREIDOK_SOURCE_PATH), str(self.RETRO): str(self.RETRO_SOURCE_PATH),
+                             str(self.EBOOK): str(self.EBOOK_SOURCE_PATH)}
+
 
 #########################################
 ############## Properties ###############
@@ -295,3 +299,7 @@ class AppConstants:
     @property
     def FREIDOK(self):
         return self._FREIDOK
+
+    @property
+    def SOURCE_DICT(self):
+        return self._SOURCE_DICT
