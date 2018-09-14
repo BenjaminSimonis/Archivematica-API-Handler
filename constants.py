@@ -75,7 +75,7 @@ class AppConstants:
         # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
         self._INSERT_SOURCE = "INSERT INTO sources (oname,type,inserted) VALUES (?,?,?);"
-        self._UPDATE_STATUS_SOURCE = "UPDATE source SET transfer_started = ? WHERE _id = ?;"
+        self._UPDATE_STATUS_SOURCE = "UPDATE sources SET transfer_started = ? WHERE _id = ?;"
         self._ALL_SOURCES = "SELECT * FROM sources;"
         self._ONE_SOURCE_NAME = "SELECT * FROM sources WHERE oname = ?;"
         self._ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"

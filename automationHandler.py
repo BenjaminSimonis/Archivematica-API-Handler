@@ -133,7 +133,7 @@ def start_transfer_auto():
         # TODO: Check Params and make new fields in source table if necessary for starting a new transfer
         # def start_transfer(name, type, accession, path, procFile):
         start_transfer(new_ingest[1], new_ingest[2], new_ingest[0],
-                       (str(AppConstants.SOURCE_DICT[new_ingest[2]]) + new_ingest[1]), AppConstants.PROCESS_AUTOMATED)
+                       (str(AppConstants.SOURCE_DICT[new_ingest[2]]) + "/" + new_ingest[1]), AppConstants.PROCESS_AUTOMATED)
         if update_source(new_ingest[0]):
             write_logs("Update source was successful", "[INFO]")
         #refresh_transfer_list_db()
