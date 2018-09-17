@@ -1,3 +1,5 @@
+import json
+
 from os import listdir
 from time import sleep
 
@@ -28,9 +30,8 @@ def insert_sources_db(source_list):
     return
 
 
-def insert_transfer_db(p_list):
-    db_handler(AppConstants.TRANSFER, AppConstants.INSERT, p_list)
-    pass
+def insert_transfer_db(s_id, s_name, acnumber,  uuid, status, conf):
+    return db_handler(AppConstants.TRANSFER, AppConstants.INSERT, s_id, s_name, acnumber,  uuid, status, conf)
 
 
 def restart_transfer_api_db():
@@ -98,7 +99,6 @@ def refresh_source_db(list_new_source):
         for value in list_new_source[key]:
             success = db_handler(AppConstants.SOURCE, AppConstants.INSERT, value, key)
             if success:
-                insert_transfer_db()
                 write_logs("Insert in DB from " + key + "/" + value + " was successful", "[INFO]")
             else:
                 write_logs(key + "/" + value + " already exist in DB", "[ERROR]")
@@ -110,6 +110,7 @@ def get_transfer_db():
 
 
 def get_active_transfers_db():
+    refresh_transfer_list_db()
     return db_handler(AppConstants.TRANSFER, AppConstants.GET_ACTIVE)
 
 
@@ -121,14 +122,6 @@ def get_transfer_api(uuids):
     return status
 
 
-def init():
-    list_db = get_source_from_db()
-    list_source = get_all_source_folder()
-    compare_source_db(list_source, list_db)
-    refresh_transfer_list_db()
-    return
-
-
 def update_source(id):
     return db_handler(AppConstants.SOURCE, AppConstants.UPDATE_STATUS_SOURCE, id)
 
@@ -138,15 +131,24 @@ def start_transfer_auto():
         new_ingest = get_unstarted_source_from_db()
         r = start_transfer(new_ingest[1], new_ingest[2], new_ingest[0],
                        (str(AppConstants.SOURCE_DICT[new_ingest[2]]) + "/" + new_ingest[1]), AppConstants.PROCESS_AUTOMATED)
-        print("automationHandler: " + r)
-        if update_source(new_ingest[0]):
-            write_logs("Update source was successful", "[INFO]")
-        #refresh_transfer_list_db()
+        print("automationHandler: " + str(r.text))
+        if r.status_code == 200:
+            if update_source(new_ingest[0]):
+                write_logs("Update source was successful", "[INFO]")
+            uuid = json.loads(r.text)["uuid"]
+            if insert_transfer_db(new_ingest[0], new_ingest[1], new_ingest[0], uuid, AppConstants.PROCESSING, AppConstants.PROCESS_AUTOMATED):
+                write_logs("Update transfer in DB was successful", "[INFO]")
     else:
         sleep(5)
-        #refresh_transfer_list_db()
-
     pass
+
+
+def init():
+    list_db = get_source_from_db()
+    list_source = get_all_source_folder()
+    compare_source_db(list_source, list_db)
+    refresh_transfer_list_db()
+    return
 
 
 # TODO: Started Transfers have no entry in transfer table. Also check, if L131 works when problem with table is solved
@@ -154,4 +156,5 @@ if __name__ == "__main__":
     init()
     while True:
         start_transfer_auto()
+        init()
     pass
