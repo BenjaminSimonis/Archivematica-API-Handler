@@ -28,6 +28,11 @@ def insert_sources_db(source_list):
     return
 
 
+def insert_transfer_db(p_list):
+    db_handler(AppConstants.TRANSFER, AppConstants.INSERT, p_list)
+    pass
+
+
 def restart_transfer_api_db():
     start_transfer()
     db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER)
@@ -93,6 +98,7 @@ def refresh_source_db(list_new_source):
         for value in list_new_source[key]:
             success = db_handler(AppConstants.SOURCE, AppConstants.INSERT, value, key)
             if success:
+                insert_transfer_db()
                 write_logs("Insert in DB from " + key + "/" + value + " was successful", "[INFO]")
             else:
                 write_logs(key + "/" + value + " already exist in DB", "[ERROR]")
@@ -130,10 +136,9 @@ def update_source(id):
 def start_transfer_auto():
     if len(get_active_transfers_db()) < 2:
         new_ingest = get_unstarted_source_from_db()
-        # TODO: Check Params and make new fields in source table if necessary for starting a new transfer
-        # def start_transfer(name, type, accession, path, procFile):
-        start_transfer(new_ingest[1], new_ingest[2], new_ingest[0],
+        r = start_transfer(new_ingest[1], new_ingest[2], new_ingest[0],
                        (str(AppConstants.SOURCE_DICT[new_ingest[2]]) + "/" + new_ingest[1]), AppConstants.PROCESS_AUTOMATED)
+        print("automationHandler: " + r)
         if update_source(new_ingest[0]):
             write_logs("Update source was successful", "[INFO]")
         #refresh_transfer_list_db()
@@ -144,6 +149,7 @@ def start_transfer_auto():
     pass
 
 
+# TODO: Started Transfers have no entry in transfer table. Also check, if L131 works when problem with table is solved
 if __name__ == "__main__":
     init()
     while True:

@@ -218,8 +218,7 @@ def start_and_approve(r):
     unapproved_transfers = json.loads(list_unapproved_transfers().text)
     for result in unapproved_transfers["results"]:
         if result["directory"] == start_dir_name:
-            approve_transfer(result["type"], start_dir_name)
-            break
+            return approve_transfer(result["type"], start_dir_name)
         else:
             continue
     return

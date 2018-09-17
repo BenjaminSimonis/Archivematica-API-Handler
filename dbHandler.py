@@ -188,7 +188,7 @@ def delete_source(cursor, source_id):
 
 
 def update_status_source(cursor, p_list):
-    cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (1, p_list[0],))
+    cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (1, datetime.now(), p_list[0],))
     if cursor.rowcount == 1:
         return True
     else:
