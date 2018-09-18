@@ -127,17 +127,20 @@ def update_source(id):
 
 
 def start_transfer_auto():
+    # TODO: Bugfix get_active_transfer_db
     if len(get_active_transfers_db()) < 2:
         new_ingest = get_unstarted_source_from_db()
         r = start_transfer(new_ingest[1], new_ingest[2], new_ingest[0],
-                       (str(AppConstants.SOURCE_DICT[new_ingest[2]]) + "/" + new_ingest[1]), AppConstants.PROCESS_AUTOMATED)
-        print("automationHandler: " + str(r.text))
-        if r.status_code == 200:
-            if update_source(new_ingest[0]):
-                write_logs("Update source was successful", "[INFO]")
-            uuid = json.loads(r.text)["uuid"]
-            if insert_transfer_db(new_ingest[0], new_ingest[1], new_ingest[0], uuid, AppConstants.PROCESSING, AppConstants.PROCESS_AUTOMATED):
-                write_logs("Update transfer in DB was successful", "[INFO]")
+                           (str(AppConstants.SOURCE_DICT[new_ingest[2]]) + "/" + new_ingest[1]),
+                           AppConstants.PROCESS_AUTOMATED)
+        if r is not None:
+            if r["status"] == 200:
+                if update_source(new_ingest[0]):
+                    write_logs("Update source was successful", "[INFO]")
+                # TODO: Bugfix insert_transfer_db
+                if insert_transfer_db(new_ingest[0], new_ingest[1], new_ingest[0], r["uuid"], r["message"],
+                                      AppConstants.PROCESS_AUTOMATED):
+                    write_logs("Update transfer in DB was successful", "[INFO]")
     else:
         sleep(5)
     pass

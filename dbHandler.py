@@ -140,6 +140,7 @@ def exist_transfer(cursor, source_id):
 def insert_transfer(cursor, params):
     if exist_transfer(cursor, params[0]):
         cursor.execute(str(AppConstants.INSERT_TRANSFER), (params,))
+        print(str(cursor.rowcount))
         if cursor.rowcount == 1:
             if update_source_started(cursor, params[0], 1):
                 return True
