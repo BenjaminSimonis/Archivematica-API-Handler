@@ -56,7 +56,7 @@ def refresh_transfer_list_db():
     if len(db_list) > 0:
         # TODO: Check output of db list and look for entries in transfer db
 
-        api_list = get_transfer_api(db_list[0])
+        api_list = get_transfer_api(db_list[4])
         print(api_list)
     else:
         print("No Transfer in DB.")

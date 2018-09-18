@@ -102,7 +102,8 @@ def create_db():
 ##################################
 def get_transfer_list(cursor):
     cursor.execute(str(AppConstants.ALL_TRANSFERS))
-    t_list = cursor.fetchall()
+    tuple_list = cursor.fetchall()[0]
+    t_list = list(tuple_list)
     return t_list
 
 
@@ -138,8 +139,8 @@ def exist_transfer(cursor, source_id):
 
 # Params: sourceID, transfername, accessionnumber, uuid, status, processingconf
 def insert_transfer(cursor, params):
-    if exist_transfer(cursor, params[0]):
-        cursor.execute(str(AppConstants.INSERT_TRANSFER), (params,))
+    if exist_transfer(cursor, params[0]) is False:
+        cursor.execute(str(AppConstants.INSERT_TRANSFER), (params[0],params[1],params[2],params[3],params[4],params[5],))
         print(str(cursor.rowcount))
         if cursor.rowcount == 1:
             if update_source_started(cursor, params[0], 1):
@@ -163,7 +164,8 @@ def update_transfer_status(cursor, status, uuid):
 ################################
 def get_source_list(cursor):
     cursor.execute(str(AppConstants.ALL_SOURCES))
-    s_list = cursor.fetchall()
+    tuple_list = cursor.fetchall()[0]
+    s_list = list(tuple_list)
     return s_list
 
 
@@ -210,7 +212,7 @@ def insert_source(cursor, oname):
 
 # First check the started status, then make a update. Otherwise return false
 def update_source_started(cursor, source_id, started):
-    cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (source_id, started,))
+    cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (1, started, source_id,))
     if cursor.rowcount == 1:
         return True
     else:
