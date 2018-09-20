@@ -108,7 +108,7 @@ def get_transfer_list(cursor):
     cursor.execute(str(AppConstants.ALL_TRANSFERS))
     tuple_list = cursor.fetchall()
     if len(tuple_list) > 0:
-        t_list = list(tuple_list[0])
+        t_list = list(tuple_list)
         return t_list
     else:
         return tuple_list
@@ -168,7 +168,7 @@ def update_transfer_status(cursor, params):
 def update_sip_uuid_transfer(cursor, p_list):
     cursor.execute(str(AppConstants.SELECT_SIP_UUID_TRANSFER), (p_list[0],))
     transfer = list(cursor.fetchone())
-    if transfer[5] is None:
+    if transfer[6] is None:
         cursor.execute(AppConstants.UPDATE_SIP_UUID_TRANSFER, (p_list[1], AppConstants.INGEST, p_list[0],))
         if cursor.rowcount is 1:
             return True
@@ -185,7 +185,7 @@ def get_source_list(cursor):
     cursor.execute(str(AppConstants.ALL_SOURCES))
     tuple_list = cursor.fetchall()
     if len(tuple_list) > 0:
-        s_list = list(tuple_list[0])
+        s_list = list(tuple_list)
         return s_list
     else:
         return tuple_list

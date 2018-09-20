@@ -71,7 +71,7 @@ class AppConstants:
         self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
         self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
-        self._SELECT_SIP_UUID_TRANSFER = "SELECT * FROM transfers WHERE t_uuid = ?;"
+        self._SELECT_SIP_UUID_TRANSFER = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._UPDATE_SIP_UUID_TRANSFER = "UPDATE transfer SET i_uuid = ?, type = ? WHERE t_uuid = ?;"
 
         # Source Table Queries

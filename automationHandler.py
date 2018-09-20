@@ -30,8 +30,8 @@ def insert_sources_db(source_list):
     return
 
 
-def insert_transfer_db(s_id, s_name, acnumber,  uuid, status, conf):
-    return db_handler(AppConstants.TRANSFER, AppConstants.INSERT, s_id, s_name, acnumber,  uuid, status, conf)
+def insert_transfer_db(s_id, s_name, acnumber, uuid, status, conf):
+    return db_handler(AppConstants.TRANSFER, AppConstants.INSERT, s_id, s_name, acnumber, uuid, status, conf)
 
 
 def restart_transfer_api_db():
@@ -40,7 +40,7 @@ def restart_transfer_api_db():
     pass
 
 
-#def check_transfer_api(uuid):
+# def check_transfer_api(uuid):
 #    status = status_transfer(uuid) and status_ingest(uuid)
 #    if status == AppConstants.FAILED:
 #        restart_transfer_api_db()
@@ -58,9 +58,9 @@ def refresh_transfer_list_db():
             transfer_item = get_transfer_api(item[4])
             # TODO: mit sip_UUID status abfragen und erneuern in DB
             db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, transfer_item[0], item)
-        #TODO: status abfragen
+        # TODO: status abfragen
     # TODO: wenn Failed restart anstoßen und
-    #TODO: status transfer überprüfen ob sip_uuid vorhanden ist. wenn nicht, status überprüfen.
+    # TODO: status transfer überprüfen ob sip_uuid vorhanden ist. wenn nicht, status überprüfen.
     else:
 
         print("No Transfer in DB.")
@@ -120,10 +120,10 @@ def get_active_transfers_db():
 
 # Returns JSON Body of an UUID from transfer or ingest tab, when available
 def get_transfer_api(uuid):
-    t_status = str(status_transfer(uuid).text)
+    t_status = json.loads(status_transfer(uuid).text)
     if "sip_uuid" in t_status:
         if db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_SIP_UUID_TRANSFER, uuid, t_status["sip_uuid"]):
-            return str(status_ingest(t_status["sip_uuid"]).text)
+            return str(status_ingest(t_status["sip_uuid"]))
     else:
         return t_status
 
