@@ -50,9 +50,9 @@ class AppConstants:
         self._DB_FILE = self._HANDLER_PATH + "storage.db"
 
         self._CREATE_TRANSFER_TABLE = "CREATE TABLE transfer (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
-                                 source INTEGER NOT NULL, tname TEXT NOT NULL, \
-                                 acnumber INTEGER, uuid TEXT NOT NULL, status TEXT NOT NULL, \
-                                 deletedate INTEGER, procconf TEXT NOT NULL, \
+                                 source INTEGER NOT NULL, tname TEXT NOT NULL, type TEXT NOT NULL,\
+                                 acnumber INTEGER, t_uuid TEXT NOT NULL, i_uuid TEXT, status TEXT NOT NULL, \
+                                 deletedate INTEGER, procconf TEXT NOT NULL, failed INTEGER NOT NULL DEFAULT 0 \
                                  FOREIGN KEY (source) REFERENCES sources(_id));"
 
         # TODO: Add column timestamp, when source is added to db
@@ -63,14 +63,16 @@ class AppConstants:
 
         # Transfer Table Queries
         self._DELETE_TRANSFER = "DELETE FROM transfer WHERE _id = ?;"
-        self._INSERT_TRANSFER = "INSERT INTO transfer (source,tname,acnumber,uuid,status,procconf)\
-                        VALUES (?,?,?,?,?,?);"
+        self._INSERT_TRANSFER = "INSERT INTO transfer (source,tname,type,acnumber,uuid,status,procconf)\
+                        VALUES (?,?,?,?,?,?,?);"
         self._UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE uuid = ?;"
         self._ALL_TRANSFERS = "SELECT * FROM transfer;"
         self._ALL_PROCESSING_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE uuid = ?;"
         self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
         self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
+        self._SELECT_SIP_UUID_TRANSFER = "SELECT * FROM transfers WHERE t_uuid = ?;"
+        self._UPDATE_SIP_UUID_TRANSFER = "UPDATE transfer SET i_uuid = ?, type = ? WHERE t_uuid = ?;"
 
         # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
@@ -81,9 +83,13 @@ class AppConstants:
         self._ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"
         self._UNSTARTED_SOURCE = "SELECT * FROM sources WHERE transfer_started = 0;"
 
-        # Dict Constants
-        self._SOURCE_DICT = {str(self.FREIDOK): str(self.FREIDOK_SOURCE_PATH), str(self.RETRO): str(self.RETRO_SOURCE_PATH),
-                             str(self.EBOOK): str(self.EBOOK_SOURCE_PATH)}
+        # Dict constants
+        self._SOURCE_DICT = {str(self.FREIDOK): str(self.FREIDOK_SOURCE_PATH),
+                             str(self.RETRO): str(self.RETRO_SOURCE_PATH), str(self.EBOOK): str(self.EBOOK_SOURCE_PATH)}
+
+        # List constants
+        self._STATUS_LIST = [str(self.FAILED), str(self.REJECTED), str(self.USER_INPUT), str(self.COMPLETE),
+                             str(self.PROCESSING)]
 
 
 #########################################
@@ -203,6 +209,14 @@ class AppConstants:
         return self._ACTIVE_TRANSFERS
 
     @property
+    def SELECT_SIP_UUID_TRANSFER(self):
+        return self._SELECT_SIP_UUID_TRANSFER
+
+    @property
+    def UPDATE_SIP_UUID_TRANSFER(self):
+        return self._UPDATE_SIP_UUID_TRANSFER
+
+    @property
     def DELETE_SOURCE(self):
         return self._DELETE_SOURCE
 
@@ -303,3 +317,7 @@ class AppConstants:
     @property
     def SOURCE_DICT(self):
         return self._SOURCE_DICT
+
+    @property
+    def STATUS_LIST(self):
+        return self._STATUS_LIST

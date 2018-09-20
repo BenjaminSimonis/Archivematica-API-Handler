@@ -40,11 +40,11 @@ def restart_transfer_api_db():
     pass
 
 
-def check_transfer_api(uuid):
-    status = status_transfer(uuid) and status_ingest(uuid)
-    if status == AppConstants.FAILED:
-        restart_transfer_api_db()
-    pass
+#def check_transfer_api(uuid):
+#    status = status_transfer(uuid) and status_ingest(uuid)
+#    if status == AppConstants.FAILED:
+#        restart_transfer_api_db()
+#    pass
 
 
 # TODO: When db_list has entries, check for updates from API. Ignore all finished Ingests in db_list.
@@ -52,13 +52,17 @@ def check_transfer_api(uuid):
 # TODO: Return list of startable source items
 def refresh_transfer_list_db():
     db_list = get_transfer_db()
-    print(db_list)
     if len(db_list) > 0:
         # TODO: Check output of db list and look for entries in transfer db
-
-        api_list = get_transfer_api(db_list[4])
-        print(api_list)
+        for item in db_list:
+            transfer_item = get_transfer_api(item[4])
+            # TODO: mit sip_UUID status abfragen und erneuern in DB
+            db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, transfer_item[0], item)
+        #TODO: status abfragen
+    # TODO: wenn Failed restart anstoßen und
+    #TODO: status transfer überprüfen ob sip_uuid vorhanden ist. wenn nicht, status überprüfen.
     else:
+
         print("No Transfer in DB.")
     return
 
@@ -77,7 +81,7 @@ def write_logs(message, log_type):
     pass
 
 
-def get_source_from_db():
+def get_sources_from_db():
     return db_handler(AppConstants.SOURCE, AppConstants.GET_ALL)
 
 
@@ -114,12 +118,14 @@ def get_active_transfers_db():
     return db_handler(AppConstants.TRANSFER, AppConstants.GET_ACTIVE)
 
 
-def get_transfer_api(uuids):
-    status = {}
-    for uuid in uuids:
-        status[str(AppConstants.TRANSFER) + "-" + uuid] = status_transfer(uuid)
-        status[str(AppConstants.INGEST) + "-" + uuid] = status_ingest(uuid)
-    return status
+# Returns JSON Body of an UUID from transfer or ingest tab, when available
+def get_transfer_api(uuid):
+    t_status = str(status_transfer(uuid).text)
+    if "sip_uuid" in t_status:
+        if db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_SIP_UUID_TRANSFER, uuid, t_status["sip_uuid"]):
+            return str(status_ingest(t_status["sip_uuid"]).text)
+    else:
+        return t_status
 
 
 def update_source(id):
@@ -138,7 +144,7 @@ def start_transfer_auto():
                 if update_source(new_ingest[0]):
                     write_logs("Update source was successful", "[INFO]")
                 # TODO: Bugfix insert_transfer_db
-                if insert_transfer_db(new_ingest[0], new_ingest[1], new_ingest[0], r["uuid"], r["message"],
+                if insert_transfer_db(new_ingest[0], new_ingest[1], new_ingest[0], r["uuid"], AppConstants.PROCESSING,
                                       AppConstants.PROCESS_AUTOMATED):
                     write_logs("Update transfer in DB was successful", "[INFO]")
     else:
@@ -147,7 +153,7 @@ def start_transfer_auto():
 
 
 def init():
-    list_db = get_source_from_db()
+    list_db = get_sources_from_db()
     list_source = get_all_source_folder()
     compare_source_db(list_source, list_db)
     refresh_transfer_list_db()

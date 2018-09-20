@@ -49,6 +49,10 @@ def transfer_handler(cursor, method, p_list):
         answer = insert_transfer(cursor, p_list)
     elif method == AppConstants.DELETE:
         answer = delete_transfer(cursor, p_list)
+    elif method == AppConstants.UPDATE_SIP_UUID_TRANSFER:
+        answer = update_sip_uuid_transfer(cursor, p_list)
+    elif method == AppConstants.UPDATE_STATUS_TRANSFER:
+        answer = update_transfer_status(cursor, p_list)
     else:
         raise Exception('\"' + method + '\" is not a supported method!')
     return answer
@@ -102,9 +106,12 @@ def create_db():
 ##################################
 def get_transfer_list(cursor):
     cursor.execute(str(AppConstants.ALL_TRANSFERS))
-    tuple_list = cursor.fetchall()[0]
-    t_list = list(tuple_list)
-    return t_list
+    tuple_list = cursor.fetchall()
+    if len(tuple_list) > 0:
+        t_list = list(tuple_list[0])
+        return t_list
+    else:
+        return tuple_list
 
 
 def get_transfer(cursor, uuid):
@@ -140,7 +147,8 @@ def exist_transfer(cursor, source_id):
 # Params: sourceID, transfername, accessionnumber, uuid, status, processingconf
 def insert_transfer(cursor, params):
     if exist_transfer(cursor, params[0]) is False:
-        cursor.execute(str(AppConstants.INSERT_TRANSFER), (params[0],params[1],params[2],params[3],params[4],params[5],))
+        cursor.execute(str(AppConstants.INSERT_TRANSFER), (params[0], params[1], AppConstants.TRANSFER, params[2],
+                                                           params[3], params[4], params[5],))
         print(str(cursor.rowcount))
         if cursor.rowcount == 1:
             if update_source_started(cursor, params[0], 1):
@@ -149,14 +157,25 @@ def insert_transfer(cursor, params):
 
 
 # Updates the transfer status in transfer table and make rollback in sources if failed
-def update_transfer_status(cursor, status, uuid):
-    cursor.execute(str(AppConstants.UPDATE_STATUS_TRANSFER), (status, uuid,))
-    if status == AppConstants.FAILED:
-        update_source_started(cursor, get_transfer(cursor, uuid)[1], -1)
+def update_transfer_status(cursor, params):
+    cursor.execute(str(AppConstants.UPDATE_STATUS_TRANSFER), (params[0], params[1],))
+    if params[0] == str(AppConstants.FAILED):
+        update_source_started(cursor, get_transfer(params[0], params[1])[1], -1)
     if cursor.rowcount == 1:
         return True
+
+
+def update_sip_uuid_transfer(cursor, p_list):
+    cursor.execute(str(AppConstants.SELECT_SIP_UUID_TRANSFER), (p_list[0],))
+    transfer = list(cursor.fetchone())
+    if transfer[5] is None:
+        cursor.execute(AppConstants.UPDATE_SIP_UUID_TRANSFER, (p_list[1], AppConstants.INGEST, p_list[0],))
+        if cursor.rowcount is 1:
+            return True
+        else:
+            return False
     else:
-        raise Exception("update_transfer_status:\nSomething went wrong: Rowcount = " + cursor.rowcount)
+        return False
 
 
 ################################
@@ -164,9 +183,12 @@ def update_transfer_status(cursor, status, uuid):
 ################################
 def get_source_list(cursor):
     cursor.execute(str(AppConstants.ALL_SOURCES))
-    tuple_list = cursor.fetchall()[0]
-    s_list = list(tuple_list)
-    return s_list
+    tuple_list = cursor.fetchall()
+    if len(tuple_list) > 0:
+        s_list = list(tuple_list[0])
+        return s_list
+    else:
+        return tuple_list
 
 
 def get_source(cursor, oname):
