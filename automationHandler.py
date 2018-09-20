@@ -55,9 +55,9 @@ def refresh_transfer_list_db():
     if len(db_list) > 0:
         # TODO: Check output of db list and look for entries in transfer db
         for item in db_list:
-            transfer_item = get_transfer_api(item[4])
+            transfer_item = get_transfer_api(item[5])
             # TODO: mit sip_UUID status abfragen und erneuern in DB
-            db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, transfer_item[0], item)
+            db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, transfer_item["status"], item[5])
         # TODO: status abfragen
     # TODO: wenn Failed restart anstoßen und
     # TODO: status transfer überprüfen ob sip_uuid vorhanden ist. wenn nicht, status überprüfen.
@@ -123,7 +123,7 @@ def get_transfer_api(uuid):
     t_status = json.loads(status_transfer(uuid).text)
     if "sip_uuid" in t_status:
         if db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_SIP_UUID_TRANSFER, uuid, t_status["sip_uuid"]):
-            return str(status_ingest(t_status["sip_uuid"]))
+            return json.loads(status_ingest(t_status["sip_uuid"]).text)
     else:
         return t_status
 

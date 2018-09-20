@@ -175,7 +175,7 @@ def update_sip_uuid_transfer(cursor, p_list):
         else:
             return False
     else:
-        return False
+        return True
 
 
 ################################
