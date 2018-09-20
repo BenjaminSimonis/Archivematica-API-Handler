@@ -52,7 +52,7 @@ class AppConstants:
         self._CREATE_TRANSFER_TABLE = "CREATE TABLE transfer (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                                  source INTEGER NOT NULL, tname TEXT NOT NULL, type TEXT NOT NULL,\
                                  acnumber INTEGER, t_uuid TEXT NOT NULL, i_uuid TEXT, status TEXT NOT NULL, \
-                                 deletedate INTEGER, procconf TEXT NOT NULL, failed INTEGER NOT NULL DEFAULT 0 \
+                                 deletedate INTEGER, procconf TEXT NOT NULL, failed INTEGER NOT NULL DEFAULT 0, \
                                  FOREIGN KEY (source) REFERENCES sources(_id));"
 
         # TODO: Add column timestamp, when source is added to db
@@ -63,12 +63,12 @@ class AppConstants:
 
         # Transfer Table Queries
         self._DELETE_TRANSFER = "DELETE FROM transfer WHERE _id = ?;"
-        self._INSERT_TRANSFER = "INSERT INTO transfer (source,tname,type,acnumber,uuid,status,procconf)\
+        self._INSERT_TRANSFER = "INSERT INTO transfer (source,tname,type,acnumber,t_uuid,status,procconf)\
                         VALUES (?,?,?,?,?,?,?);"
-        self._UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE uuid = ?;"
+        self._UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE t_uuid = ?;"
         self._ALL_TRANSFERS = "SELECT * FROM transfer;"
         self._ALL_PROCESSING_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
-        self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE uuid = ?;"
+        self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
         self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._SELECT_SIP_UUID_TRANSFER = "SELECT * FROM transfers WHERE t_uuid = ?;"
