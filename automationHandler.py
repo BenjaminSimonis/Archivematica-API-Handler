@@ -6,12 +6,11 @@ from time import sleep
 from apiHandler import status_transfer, status_ingest, start_transfer
 from constants import AppConstants
 from dbHandler import db_handler
+from logger import write_log
 
 AppConstants = AppConstants()
-transfers = {}
 
 
-# source_list = {"EBOOK" : [], "RETRO" : [], "FREIDOK" : []}
 def get_all_source_folder():
     source_list = {str(AppConstants.EBOOK): listdir(str(AppConstants.EBOOK_SOURCE_PATH)),
                    str(AppConstants.RETRO): listdir(str(AppConstants.RETRO_SOURCE_PATH)),
@@ -49,16 +48,12 @@ def restart_transfer_api_db():
 
 # TODO: When db_list has entries, check for updates from API. Ignore all finished Ingests in db_list.
 # TODO: Implement delete routine for new finished items from DB after check with API
-# TODO: Return list of startable source items
 def refresh_transfer_list_db():
     db_list = get_transfer_db()
     if len(db_list) > 0:
-        # TODO: Check output of db list and look for entries in transfer db
         for item in db_list:
             transfer_item = get_transfer_api(item[5])
-            # TODO: mit sip_UUID status abfragen und erneuern in DB
             db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, transfer_item["status"], item[5])
-        # TODO: status abfragen
     # TODO: wenn Failed restart anstoßen und
     # TODO: status transfer überprüfen ob sip_uuid vorhanden ist. wenn nicht, status überprüfen.
     else:
@@ -72,12 +67,7 @@ def check_delete_dates():
 
 
 def clean_db():
-    write_logs("Cleaned DB", "[INFO]")
-    pass
-
-
-def write_logs(message, log_type):
-    print(log_type + " " + message)
+    write_log("Cleaned DB", "[INFO]")
     pass
 
 
@@ -103,9 +93,9 @@ def refresh_source_db(list_new_source):
         for value in list_new_source[key]:
             success = db_handler(AppConstants.SOURCE, AppConstants.INSERT, value, key)
             if success:
-                write_logs("Insert in DB from " + key + "/" + value + " was successful", "[INFO]")
+                write_log("Insert in DB from " + key + "/" + value + " was successful", "[INFO]")
             else:
-                write_logs(key + "/" + value + " already exist in DB", "[ERROR]")
+                write_log(key + "/" + value + " already exist in DB", "[ERROR]")
     return
 
 
@@ -133,7 +123,6 @@ def update_source(id):
 
 
 def start_transfer_auto():
-    # TODO: Bugfix get_active_transfer_db
     if len(get_active_transfers_db()) < 2:
         new_ingest = get_unstarted_source_from_db()
         r = start_transfer(new_ingest[1], new_ingest[2], new_ingest[0],
@@ -142,11 +131,12 @@ def start_transfer_auto():
         if r is not None:
             if r["status"] == 200:
                 if update_source(new_ingest[0]):
-                    write_logs("Update source was successful", "[INFO]")
-                # TODO: Bugfix insert_transfer_db
+                    write_log("Update source was successful - " + new_ingest, "[INFO]")
                 if insert_transfer_db(new_ingest[0], new_ingest[1], new_ingest[0], r["uuid"], AppConstants.PROCESSING,
                                       AppConstants.PROCESS_AUTOMATED):
-                    write_logs("Update transfer in DB was successful", "[INFO]")
+                    write_log("Update transfer in DB was successful - " + new_ingest, "[INFO]")
+            else:
+                write_log("Status Code: " + r["status"] + " " + r.values(), "[ERROR]")
     else:
         sleep(5)
     pass
@@ -160,7 +150,6 @@ def init():
     return
 
 
-# TODO: Started Transfers have no entry in transfer table. Also check, if L131 works when problem with table is solved
 if __name__ == "__main__":
     init()
     while True:

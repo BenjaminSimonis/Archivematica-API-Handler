@@ -8,8 +8,10 @@ from time import sleep
 
 from constants import AppConstants
 from credentials import *
+from logger import write_log
 import processingHandler
 AppConstants = AppConstants()
+
 
 ######################################
 ########### Transfer API #############
@@ -23,9 +25,10 @@ AppConstants = AppConstants()
 # Response: JSON
 def start_transfer(name, type, accession, path, procFile):
     url = str(AppConstants.URL_TRANSFER) + "/start_transfer/"
-    print("Starting Transfer")
+    write_log("apiHandler.py:\tStarting Transfer", "[INFO]")
     dataset = {"name": name, "type": type, "accession": accession, "paths[]": [create_base64_path(path)],
                "row_ids[]": [""]}
+    write_log("apiHandler.py:\t" + dataset, "[DEBUG]")
     processingHandler.compare_processing_file(procFile)
     return start_and_approve(post_request(url, dataset))
 
@@ -36,7 +39,7 @@ def start_transfer(name, type, accession, path, procFile):
 # Response: JSON
 def list_unapproved_transfers():
     url = str(AppConstants.URL_TRANSFER) + "/unapproved"
-    print("Unapproved Transfers")
+    write_log("apiHandler.py:\tList unapproved Transfers", "[INFO]")
     return get_request(url)
 
 
@@ -47,8 +50,9 @@ def list_unapproved_transfers():
 # Response: JSON
 def approve_transfer(type, dir):
     url = str(AppConstants.URL_TRANSFER) + "/approve"
-    print("Approve Transfer")
+    write_log("apiHandler.py:\tApprove Transfer", "[INFO]")
     dataset = {"type": type, "directory": dir}
+    write_log("apiHandler.py:\t" + dataset, "[DEBUG]")
     return post_request(url, dataset)
 
 
@@ -58,9 +62,8 @@ def approve_transfer(type, dir):
 # Response: JSON
 def status_transfer(uuid):
     url = str(AppConstants.URL_TRANSFER) + "/status/" + uuid
-    print("Status Transfer: " + uuid)
-    r = get_request(url)
-    return r
+    write_log("apiHandler.py:\tStatus Transfer: " + uuid, "[INFO]")
+    return get_request(url)
 
 
 # URL: /api/transfer/<transfer UUID>/delete/
@@ -69,9 +72,8 @@ def status_transfer(uuid):
 # Response: JSON
 def hide_transfer(uuid):
     url = str(AppConstants.URL_TRANSFER) + "/" + uuid + "/delete/"
-    print("Hide Transfer: " + uuid)
-    delete_request(url)
-    return
+    write_log("apiHandler.py:\tHide Transfer: " + uuid, "[INFO]")
+    return delete_request(url)
 
 
 # URL: /api/transfer/completed/
@@ -80,9 +82,8 @@ def hide_transfer(uuid):
 # Response: JSON
 def completed_transfers():
     url = str(AppConstants.URL_TRANSFER) + "/completed/"
-    print("Completed Transfers")
-    r = get_request(url)
-    return r
+    write_log("apiHandler.py:\tCompleted Transfers", "[INFO]")
+    return get_request(url)
 
 
 ######################################
@@ -96,9 +97,8 @@ def completed_transfers():
 # Response: JSON
 def status_ingest(uuid):
     url = str(AppConstants.URL_INGEST) + "/status/" + uuid + "/"
-    print("Status Ingest: " + uuid)
-    r = get_request(url)
-    return r
+    write_log("apiHandler.py:\tStatus Ingest: " + uuid, "[INFO]")
+    return get_request(url)
 
 
 # URL: /api/ingest/<SIP UUID>/delete/
@@ -107,9 +107,8 @@ def status_ingest(uuid):
 # Response: JSON
 def hide_ingest(uuid):
     url = str(AppConstants.URL_INGEST) + "/" + uuid + "/delete/"
-    print("Hide Ingest: " + uuid)
-    delete_request(url)
-    return
+    write_log("apiHandler.py:\tHide Ingest: " + uuid, "[INFO]")
+    return delete_request(url)
 
 
 # URL: /api/ingest/waiting
@@ -118,9 +117,8 @@ def hide_ingest(uuid):
 # Response: JSON
 def waiting_for_user_ingests():
     url = str(AppConstants.URL_INGEST) + "/waiting"
-    print("Ingests waiting for user input")
-    get_request(url)
-    return
+    write_log("apiHandler.py:\tIngests waiting for user input", "[INFO]")
+    return get_request(url)
 
 
 # URL: /api/ingest/completed/
@@ -129,9 +127,8 @@ def waiting_for_user_ingests():
 # Response: JSON
 def completed_ingests():
     url = str(AppConstants.URL_INGEST) + "/completed/"
-    print("Completed Ingests")
-    r = get_request(url)
-    return r
+    write_log("apiHandler.py:\tCompleted Ingests", "[INFO]")
+    return get_request(url)
 
 
 # URL: /api/transfer/reingest
@@ -141,10 +138,10 @@ def completed_ingests():
 # Response: JSON
 def start_full_reingest(name, uuid):
     url = str(AppConstants.URL_TRANSFER) + "/reingest"
-    print("Full Re-Ingest")
+    write_log("apiHandler.py:\tFull Re-Ingest", "[INFO]")
     dataset = {"name": name, "uuid": uuid}
-    post_request(url, dataset)
-    pass
+    write_log("apiHandler.py:\t" + dataset, "[DEBUG]")
+    return post_request(url, dataset)
 
 
 # URL: /api/ingest/reingest
@@ -154,10 +151,10 @@ def start_full_reingest(name, uuid):
 # Response: JSON
 def start_partial_reingest(name, uuid):
     url = str(AppConstants.URL_INGEST) + "/reingest"
-    print("Full Re-Ingest")
+    write_log("apiHandler.py:\tFull Re-Ingest", "[INFO]")
     dataset = {"name": name, "uuid": uuid}
-    post_request(url, dataset)
-    pass
+    write_log("apiHandler.py:\t" + dataset, "[DEBUG]")
+    return post_request(url, dataset)
 
 
 # URL: /api/ingest/copy_metadata_files/
@@ -203,6 +200,7 @@ def create_base64_path(target_path):
     else:
         path = target_path
     base_path = base64.b64encode(os.fsencode(TS_LOCATION_UUID) + b':' + os.fsencode(path))
+    write_log("apiHandler.py:\t" + base_path, "[DEBUG]")
     return base_path
 
 
@@ -221,6 +219,7 @@ def start_and_approve(r):
             response = approve_transfer(result["type"], start_dir_name)
             resp_dict = {"status": response.status_code, "message": json.loads(response.text)["message"],
                          "uuid": json.loads(response.text)["uuid"]}
+            write_log("apiHandler.py:\t" + resp_dict, "[DEBUG]")
             return resp_dict
         else:
             continue
@@ -234,9 +233,7 @@ def start_and_approve(r):
 # If something went wrong raise an exception
 def process_response(r):
     if r.status_code == 200:
-        print("Success!")
-        print(r.text)
+        write_log("apiHandler.py:\tSuccess! - Status Code: " + r.status_code + "Response: " + r.text, "[DEBUG]")
     else:
-        print("Failed!")
-        raise Exception(r.reason)
+        write_log("apiHandler.py:\tFailed! - Status Code: " + r.status_code + "Response: " + r.reason, "[DEBUG]")
     return

@@ -27,6 +27,9 @@ class AppConstants:
         self._PROCESS_PATH_DEFAULT = self._PROCESS_PATH + self._PROCESS_DEFAULT
         self._LOCAL_PROCESS_DIR = "processingConfs/"
 
+        self._DEBUG_FILE = "DEBUG"
+        self._DEBUG_PATH = self._HANDLER_PATH + self._DEBUG_FILE
+
         # Miscellaneous constants
         self._SOURCE = "SOURCE"
         self._TRANSFER = "TRANSFER"
@@ -161,6 +164,14 @@ class AppConstants:
     @property
     def LOCAL_PROCESS_DIR(self):
         return self._LOCAL_PROCESS_DIR
+
+    @property
+    def DEBUG_FILE(self):
+        return self._DEBUG_FILE
+
+    @property
+    def DEBUG_PATH(self):
+        return self._DEBUG_PATH
 
     # Database constants
 
