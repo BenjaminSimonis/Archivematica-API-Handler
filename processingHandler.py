@@ -10,9 +10,9 @@ AppConstants = AppConstants()
 def compare_processing_file(procFile):
     diffPath = "bash " + str(AppConstants.HANDLER_PATH) + str(AppConstants.LOCAL_PROCESS_DIR) + \
                "diffProcessing.sh " + str(AppConstants.HANDLER_PATH) + str(AppConstants.LOCAL_PROCESS_DIR) + procFile
-    write_log("processingHandler.py:\t" + diffPath, "[DEBUG]")
+    write_log("processingHandler.py:\t" + str(diffPath), "[DEBUG]")
     diff = subprocess.check_output(diffPath, shell=True)
-    write_log("processingHandler.py:\t" + diff, "[DEBUG]")
+    write_log("processingHandler.py:\t" + str(diff), "[DEBUG]")
     if len(diff) > 0:
         change_processing_file(procFile)
         return
@@ -23,6 +23,6 @@ def compare_processing_file(procFile):
 def change_processing_file(procFile):
     changePath = "bash " + str(AppConstants.HANDLER_PATH) + str(AppConstants.LOCAL_PROCESS_DIR) + \
                "changeProcessing.sh " + str(AppConstants.HANDLER_PATH) + str(AppConstants.LOCAL_PROCESS_DIR) + procFile
-    write_log("processingHandler.py:\t" + changePath, "[DEBUG]")
+    write_log("processingHandler.py:\t" + str(changePath), "[DEBUG]")
     subprocess.check_output(changePath, shell=True)
     return

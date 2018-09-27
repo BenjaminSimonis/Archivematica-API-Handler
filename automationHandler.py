@@ -1,6 +1,8 @@
 import json
+import sys
 
-from os import listdir
+from os import listdir, remove
+from os.path import exists
 from time import sleep
 
 from apiHandler import status_transfer, status_ingest, start_transfer
@@ -93,9 +95,9 @@ def refresh_source_db(list_new_source):
         for value in list_new_source[key]:
             success = db_handler(AppConstants.SOURCE, AppConstants.INSERT, value, key)
             if success:
-                write_log("Insert in DB from " + key + "/" + value + " was successful", "[INFO]")
+                write_log("Insert in DB from " + str(key) + "/" + str(value) + " was successful", "[INFO]")
             else:
-                write_log(key + "/" + value + " already exist in DB", "[ERROR]")
+                write_log(str(key) + "/" + str(value) + " already exist in DB", "[ERROR]")
     return
 
 
@@ -131,18 +133,24 @@ def start_transfer_auto():
         if r is not None:
             if r["status"] == 200:
                 if update_source(new_ingest[0]):
-                    write_log("Update source was successful - " + new_ingest, "[INFO]")
+                    write_log("Update source was successful - " + str(new_ingest), "[INFO]")
                 if insert_transfer_db(new_ingest[0], new_ingest[1], new_ingest[0], r["uuid"], AppConstants.PROCESSING,
                                       AppConstants.PROCESS_AUTOMATED):
-                    write_log("Update transfer in DB was successful - " + new_ingest, "[INFO]")
+                    write_log("Update transfer in DB was successful - " + str(new_ingest), "[INFO]")
             else:
-                write_log("Status Code: " + r["status"] + " " + r.values(), "[ERROR]")
+                write_log("Status Code: " + str(r["status"]) + " " + str(r.values()), "[ERROR]")
     else:
         sleep(5)
     pass
 
 
 def init():
+    if sys.argv[-1] == "DEBUG":
+        f = open("DEBUG", "w+")
+        f.close()
+    else:
+        if exists(str(AppConstants.DEBUG_PATH)):
+            remove(str(AppConstants.DEBUG_PATH))
     list_db = get_sources_from_db()
     list_source = get_all_source_folder()
     compare_source_db(list_source, list_db)

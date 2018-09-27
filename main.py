@@ -1,3 +1,6 @@
+from os import remove
+from os.path import exists
+
 import help
 import processingHandler
 import sys
@@ -5,12 +8,14 @@ import sys
 from apiHandler import start_partial_reingest, start_full_reingest, completed_ingests, \
     waiting_for_user_ingests, hide_ingest, status_ingest, hide_transfer, start_transfer, \
     list_unapproved_transfers, approve_transfer, status_transfer, completed_transfers
+from constants import AppConstants
+from logger import write_log
 
 
+AppConstants = AppConstants()
 ######################################
 ########### Initializing #############
 ######################################
-from logger import write_log
 
 
 def init():
@@ -23,7 +28,7 @@ def init():
             help.command_description(sys.argv[2])
             return
     elif method == "start_transfer" and sys.argv.__len__() == 7:
-        write_log("manualHandler.py:\tstart_transfer: " + sys.argv, "[DEBUG]")
+        write_log("manualHandler.py:\tstart_transfer: " + str(sys.argv), "[DEBUG]")
         start_transfer(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6])
         return
     elif method == "list_unapproved":
@@ -31,11 +36,11 @@ def init():
         list_unapproved_transfers()
         return
     elif method == "approve_transfer" and sys.argv.__len__() == 4:
-        write_log("manualHandler.py:\tapprove_transfer: " + sys.argv, "[DEBUG]")
+        write_log("manualHandler.py:\tapprove_transfer: " + str(sys.argv), "[DEBUG]")
         approve_transfer(sys.argv[2], sys.argv[3])
         return
     elif method == "status_transfer" and sys.argv.__len__() == 3:
-        write_log("manualHandler.py:\tstatus_transfer: " + sys.argv, "[DEBUG]")
+        write_log("manualHandler.py:\tstatus_transfer: " + str(sys.argv), "[DEBUG]")
         status_transfer(sys.argv[2])
         return
     elif method == "completed_transfer":
@@ -43,15 +48,15 @@ def init():
         completed_transfers()
         return
     elif method == "hide_transfer" and sys.argv.__len__() == 3:
-        write_log("manualHandler.py:\thide_transfer: " + sys.argv, "[DEBUG]")
+        write_log("manualHandler.py:\thide_transfer: " + str(sys.argv), "[DEBUG]")
         hide_transfer(sys.argv[2])
         return
     elif method == "status_ingest" and sys.argv.__len__() == 3:
-        write_log("manualHandler.py:\tstatus_ingest: " + sys.argv, "[DEBUG]")
+        write_log("manualHandler.py:\tstatus_ingest: " + str(sys.argv), "[DEBUG]")
         status_ingest(sys.argv[2])
         return
     elif method == "hide_ingest" and sys.argv.__len__() == 3:
-        write_log("manualHandler.py:\thide_ingest: " + sys.argv, "[DEBUG]")
+        write_log("manualHandler.py:\thide_ingest: " + str(sys.argv), "[DEBUG]")
         hide_ingest(sys.argv[2])
         return
     elif method == "waiting_ingests":
@@ -63,11 +68,11 @@ def init():
         completed_ingests()
         return
     elif method == "full_reingest" and sys.argv.__len__() == 4:
-        write_log("manualHandler.py:\tfull_reingest: " + sys.argv, "[DEBUG]")
+        write_log("manualHandler.py:\tfull_reingest: " + str(sys.argv), "[DEBUG]")
         start_full_reingest(sys.argv[2], sys.argv[3])
         return
     elif method == "part_reingest" and sys.argv.__len__() == 4:
-        write_log("manualHandler.py:\tpart_reingest: " + sys.argv, "[DEBUG]")
+        write_log("manualHandler.py:\tpart_reingest: " + str(sys.argv), "[DEBUG]")
         start_partial_reingest(sys.argv[2], sys.argv[3])
         return
     elif method == "test":
@@ -86,6 +91,12 @@ def init():
 
 if __name__ == "__main__":
     if sys.argv.__len__() > 1:
+        if sys.argv[-1] == "DEBUG":
+            f = open("DEBUG", "w+")
+            f.close()
+        else:
+            if exists(str(AppConstants.DEBUG_PATH)):
+                remove(str(AppConstants.DEBUG_PATH))
         init()
     else:
         write_log("manualHandler.py:\tRead the f****** manual!", "[ERROR]")
