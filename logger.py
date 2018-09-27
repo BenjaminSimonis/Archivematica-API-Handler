@@ -16,7 +16,7 @@ def open_error_writer():
 
 
 def create_timestamp():
-    return datetime.now()
+    return str(datetime.now())
 
 
 def debug_mode():
@@ -32,7 +32,7 @@ def write_log(message, log_type):
     else:
         logger = open_log_writer()
     if (log_type == "[DEBUG]" and debug_mode()) or log_type == "[INFO]":
-        logger.write(log_type + "\t" + create_timestamp() + "\t" + message)
+        logger.write(log_type + "\t" + create_timestamp() + "\t" + message + "\n")
     logger.flush()
     logger.close()
     return True
