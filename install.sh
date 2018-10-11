@@ -12,5 +12,5 @@ sudo rm get-pip.py
 mkdir ../source
 mkdir ../source/ebooks
 mkdir ../source/retro
-mkdir ../source/freidok
+mkdir ../source/repo
 mkdir ../source/done

@@ -1,3 +1,6 @@
+from os import listdir
+
+
 class AppConstants:
 
     #########################################
@@ -14,10 +17,18 @@ class AppConstants:
         self._WORKING_PATH = "/var/archivematica"
         self._HANDLER_PATH = self._WORKING_PATH + "/Archivematica-API-Handler/"
         self._SOURCE_PATH = self._WORKING_PATH + "/source"
+        self._DONE_SOURCE_PATH = self._SOURCE_PATH + "/done"
+
+        ########################
+        # Installations specific constants (please edit for own installation)
+        ########################
         self._EBOOK_SOURCE_PATH = self._SOURCE_PATH + "/ebooks"
         self._RETRO_SOURCE_PATH = self._SOURCE_PATH + "/retro"
-        self._FREIDOK_SOURCE_PATH = self._SOURCE_PATH + "/freidok"
-        self._DONE_SOURCE_PATH = self._SOURCE_PATH + "/done"
+        self._REPO_SOURCE_PATH = self._SOURCE_PATH + "/repo"
+        self._EBOOK = "EBOOK"
+        self._RETRO = "RETRO"
+        self._REPO = "REPO"
+        ##########################
 
         # Processing path constants
         self._PROCESS_PATH = self._WORKING_PATH + "/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/"
@@ -45,9 +56,6 @@ class AppConstants:
         self._USER_INPUT = "USER_INPUT"
         self._COMPLETE = "COMPLETE"
         self._PROCESSING = "PROCESSING"
-        self._EBOOK = "EBOOK"
-        self._RETRO = "RETRO"
-        self._FREIDOK = "FREIDOK"
 
         # Database constants
         self._DB_FILE = self._HANDLER_PATH + "storage.db"
@@ -87,8 +95,9 @@ class AppConstants:
         self._UNSTARTED_SOURCE = "SELECT * FROM sources WHERE transfer_started = 0;"
 
         # Dict constants
-        self._SOURCE_DICT = {str(self.FREIDOK): str(self.FREIDOK_SOURCE_PATH),
-                             str(self.RETRO): str(self.RETRO_SOURCE_PATH), str(self.EBOOK): str(self.EBOOK_SOURCE_PATH)}
+        self._SOURCE_DICT = {str(self.FREIDOK): str(self.REPO_SOURCE_PATH),
+                             str(self.RETRO): str(self.RETRO_SOURCE_PATH),
+                             str(self.EBOOK): str(self.EBOOK_SOURCE_PATH)}
 
         # List constants
         self._STATUS_LIST = [str(self.FAILED), str(self.REJECTED), str(self.USER_INPUT), str(self.COMPLETE),
@@ -98,6 +107,42 @@ class AppConstants:
 #########################################
 ############## Properties ###############
 #########################################
+
+    ########################
+    # Installations specific constants (please edit for own installation)
+    ########################
+    @property
+    def EBOOK(self):
+        return self._EBOOK
+
+    @property
+    def RETRO(self):
+        return self._RETRO
+
+    @property
+    def REPO(self):
+        return self._REPO
+
+    @property
+    def EBOOK_SOURCE_PATH(self):
+        return self._EBOOK_SOURCE_PATH
+
+    @property
+    def RETRO_SOURCE_PATH(self):
+        return self._RETRO_SOURCE_PATH
+
+    @property
+    def REPO_SOURCE_PATH(self):
+        return self._REPO_SOURCE_PATH
+
+    @property
+    def SOURCE_LIST(self):
+        source_list = {str(self._EBOOK): listdir(str(self._EBOOK_SOURCE_PATH)),
+                       str(self._RETRO): listdir(str(self._RETRO_SOURCE_PATH)),
+                       str(self._REPO): listdir(str(self._REPO_SOURCE_PATH))}
+        return source_list
+
+    ##############################################################
 
     # API constants
 
@@ -122,18 +167,6 @@ class AppConstants:
     @property
     def SOURCE_PATH(self):
         return self._SOURCE_PATH
-
-    @property
-    def EBOOK_SOURCE_PATH(self):
-        return self._EBOOK_SOURCE_PATH
-
-    @property
-    def RETRO_SOURCE_PATH(self):
-        return self._RETRO_SOURCE_PATH
-
-    @property
-    def FREIDOK_SOURCE_PATH(self):
-        return self._FREIDOK_SOURCE_PATH
 
     @property
     def DONE_SOURCE_PATH(self):
@@ -312,18 +345,6 @@ class AppConstants:
     @property
     def PROCESSING(self):
         return self._PROCESSING
-
-    @property
-    def EBOOK(self):
-        return self._EBOOK
-
-    @property
-    def RETRO(self):
-        return self._RETRO
-
-    @property
-    def FREIDOK(self):
-        return self._FREIDOK
 
     @property
     def SOURCE_DICT(self):

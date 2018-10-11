@@ -88,7 +88,6 @@ def source_handler(cursor, method, p_list):
 def create_db_connection():
     db_exists()
     conn = sqlite3.connect(str(AppConstants.DB_FILE))
-    write_log("dbHandler.py:\tCreate DB Connection.", "[DEBUG]")
     return conn
 
 

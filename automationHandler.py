@@ -1,7 +1,7 @@
 import json
 import sys
 
-from os import listdir, remove
+from os import remove
 from os.path import exists
 from time import sleep
 
@@ -11,13 +11,6 @@ from dbHandler import db_handler
 from logger import write_log
 
 AppConstants = AppConstants()
-
-
-def get_all_source_folder():
-    source_list = {str(AppConstants.EBOOK): listdir(str(AppConstants.EBOOK_SOURCE_PATH)),
-                   str(AppConstants.RETRO): listdir(str(AppConstants.RETRO_SOURCE_PATH)),
-                   str(AppConstants.FREIDOK): listdir(str(AppConstants.FREIDOK_SOURCE_PATH))}
-    return source_list
 
 
 def get_all_transfers_ingests_db():
@@ -59,8 +52,7 @@ def refresh_transfer_list_db():
     # TODO: wenn Failed restart anstoßen und
     # TODO: status transfer überprüfen ob sip_uuid vorhanden ist. wenn nicht, status überprüfen.
     else:
-
-        print("No Transfer in DB.")
+        write_log("No Transfer in DB.", "[INFO]")
     return
 
 
@@ -152,7 +144,7 @@ def init():
         if exists(str(AppConstants.DEBUG_PATH)):
             remove(str(AppConstants.DEBUG_PATH))
     list_db = get_sources_from_db()
-    list_source = get_all_source_folder()
+    list_source = AppConstants.SOURCE_LIST
     compare_source_db(list_source, list_db)
     refresh_transfer_list_db()
     return
