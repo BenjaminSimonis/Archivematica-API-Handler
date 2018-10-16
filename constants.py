@@ -18,6 +18,7 @@ class AppConstants:
         self._HANDLER_PATH = self._WORKING_PATH + "/Archivematica-API-Handler/"
         self._SOURCE_PATH = self._WORKING_PATH + "/source"
         self._DONE_SOURCE_PATH = self._SOURCE_PATH + "/done"
+        self._FAILED_SOURCE_PATH = self._SOURCE_PATH + "/failed"
 
         ########################
         # Installations specific constants (please edit for own installation)
@@ -28,6 +29,10 @@ class AppConstants:
         self._EBOOK = "EBOOK"
         self._RETRO = "RETRO"
         self._REPO = "REPO"
+        # Dict constants
+        self._SOURCE_DICT = {str(self.REPO): str(self.REPO_SOURCE_PATH),
+                             str(self.RETRO): str(self.RETRO_SOURCE_PATH),
+                             str(self.EBOOK): str(self.EBOOK_SOURCE_PATH)}
         ##########################
 
         # Processing path constants
@@ -66,7 +71,6 @@ class AppConstants:
                                  deletedate INTEGER, procconf TEXT NOT NULL, failed INTEGER NOT NULL DEFAULT 0, \
                                  FOREIGN KEY (source) REFERENCES sources(_id));"
 
-        # TODO: Add column timestamp, when source is added to db
         # TODO: Add column ingest_finished
         self._CREATE_SOURCE_TABLE = "CREATE TABLE sources (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
                                 oname TEXT NOT NULL, type TEXT NOT NULL, inserted timestamp NOT NULL, \
@@ -84,6 +88,7 @@ class AppConstants:
         self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._SELECT_SIP_UUID_TRANSFER = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._UPDATE_SIP_UUID_TRANSFER = "UPDATE transfer SET i_uuid = ?, type = ? WHERE t_uuid = ?;"
+        self._UPDATE_FAILED_COUNTER_TRANSFER = "UPDATE transfer SET failed = ? WHERE t_uuid = ?;"
 
         # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
@@ -93,11 +98,6 @@ class AppConstants:
         self._ONE_SOURCE_NAME = "SELECT * FROM sources WHERE oname = ?;"
         self._ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"
         self._UNSTARTED_SOURCE = "SELECT * FROM sources WHERE transfer_started = 0;"
-
-        # Dict constants
-        self._SOURCE_DICT = {str(self.FREIDOK): str(self.REPO_SOURCE_PATH),
-                             str(self.RETRO): str(self.RETRO_SOURCE_PATH),
-                             str(self.EBOOK): str(self.EBOOK_SOURCE_PATH)}
 
         # List constants
         self._STATUS_LIST = [str(self.FAILED), str(self.REJECTED), str(self.USER_INPUT), str(self.COMPLETE),
@@ -171,6 +171,10 @@ class AppConstants:
     @property
     def DONE_SOURCE_PATH(self):
         return self._DONE_SOURCE_PATH
+
+    @property
+    def FAILED_SOURCE_PATH(self):
+        return self._FAILED_SOURCE_PATH
 
     # Processing path constants
 
@@ -259,6 +263,10 @@ class AppConstants:
     @property
     def UPDATE_SIP_UUID_TRANSFER(self):
         return self._UPDATE_SIP_UUID_TRANSFER
+
+    @property
+    def UPDATE_FAILED_COUNTER_TRANSFER(self):
+        return self._UPDATE_FAILED_COUNTER_TRANSFER
 
     @property
     def DELETE_SOURCE(self):

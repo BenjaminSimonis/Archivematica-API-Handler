@@ -1,7 +1,7 @@
 import os.path
 import sqlite3
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from constants import AppConstants
 from logger import write_log
@@ -176,7 +176,9 @@ def insert_transfer(cursor, params):
 def update_transfer_status(cursor, params):
     cursor.execute(str(AppConstants.UPDATE_STATUS_TRANSFER), (params[0], params[1],))
     if params[0] == str(AppConstants.FAILED):
-        update_source_started(cursor, get_transfer(params[0], params[1])[1], -1)
+        transfer = get_transfer(cursor, params[1])
+        update_source_started(cursor, transfer[1], 0)
+        cursor.execute(str(AppConstants.UPDATE_FAILED_COUNTER_TRANSFER), ((int(transfer[10]) + 1), transfer[5]))
     if cursor.rowcount == 1:
         write_log("dbHandler.py:\tupdate_transfer_status:\t" + str(params), "[INFO]")
         return True
@@ -222,9 +224,13 @@ def get_source(cursor, oname):
 
 def get_unstarted_source(cursor):
     cursor.execute(str(AppConstants.UNSTARTED_SOURCE))
-    source = cursor.fetchone()
-    write_log("dbHandler.py:\tget_unstarted_source:\t" + str(source), "[DEBUG]")
-    return source
+    source_list = list(cursor.fetchall())
+    for source in source_list:
+        if (source[3] + timedelta(days=1)) < datetime.now():
+            write_log("dbHandler.py:\tget_unstarted_source:\t" + str(source), "[DEBUG]")
+            return source
+    write_log("dbHandler.py:\tget_unstarted_source:\tNo startable source found!", "[DEBUG]")
+    return None
 
 
 # Items, that will be deleted, have to be checked before calling this method
