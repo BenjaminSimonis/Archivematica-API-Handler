@@ -76,15 +76,16 @@ def get_unstarted_source_from_db():
 
 def compare_source_db(list_source, list_db):
     list_new_source = {}
-    for key, value in list_source.items():
-        if (value not in list_db) and is_source_dir_not_empty(key, value):
-            list_new_source[key] = value
+    for key, values in list_source.items():
+        for value in values:
+            if (value not in list_db) and is_source_dir_not_empty(key, value):
+                list_new_source.setdefault(key, []).append(value)
     refresh_source_db(list_new_source)
     return
 
 
 def is_source_dir_not_empty(key, value):
-    if len(listdir(str(AppConstants.SOURCE_DICT[key] + "/" + value))) > 0:
+    if len(listdir(str(AppConstants.SOURCE_DICT[key]) + "/" + str(value))) > 0:
         return True
     else:
         return False
