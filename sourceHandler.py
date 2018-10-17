@@ -7,6 +7,11 @@ from logger import write_log
 from os import getcwd, listdir
 from shutil import move, rmtree
 
+AppConstants = AppConstants()
+
+# TODO: Make two entrance points for calling from other methods.
+# One for moving Finished Ingests to done / delete
+# Second one to check, if delete date has arrived and delete old stuff from drive and DB!
 
 # Check via API if an Ingest is completed
 def is_ingest_complete(uuid):
@@ -25,7 +30,7 @@ def is_ingest_complete(uuid):
 # Move the source of an completed ingest to the done directory
 def move_source_to_done(path, uuid):
     if is_ingest_complete(uuid):
-        move(path, AppConstants.DONE_SOURCE_PATH)
+        move(path, str(AppConstants.DONE_SOURCE_PATH))
         write_log("sourceHandler.py:\tMoved " + str(path) + " to DONE Folder", "[INFO]")
         create_delete_date(path)
     else:
@@ -54,7 +59,7 @@ def check_delete_date(path):
         if item.startswith("delete"):
             itemparts = item.split("_")
             write_log("sourceHandler.py:\t" + str(itemparts), "[DEBUG]")
-            if itemparts[1] == path and itemparts[2] < datetime.now():
+            if (itemparts[1] == path) and (itemparts[2] < datetime.now()):
                 return True
             elif itemparts[1] == path:
                 return False

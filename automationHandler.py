@@ -10,6 +10,7 @@ from apiHandler import status_transfer, status_ingest, start_transfer
 from constants import AppConstants
 from dbHandler import db_handler
 from logger import write_log
+from sourceHandler import move_source_to_done
 
 AppConstants = AppConstants()
 
@@ -44,26 +45,34 @@ def restart_transfer_api_db(t_uuid):
 
 # TODO: When db_list has entries, check for updates from API. Ignore all finished Ingests in db_list.
 # TODO: Implement delete routine for new finished items from DB after check with API
+# TODO: Check if item[6] (i_uuid) is empty. when empty, update that shit
 def refresh_transfer_list_db():
-    db_list = get_transfer_db()
+    db_list = get_transfers_db()
     if len(db_list) > 0:
         for item in db_list:
-            transfer_item = get_transfer_api(item[5])
-            db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, transfer_item["status"], item[5])
-            if transfer_item["status"] is AppConstants.FAILED:
-                restart_transfer_api_db(item[5])
+            item_uuid = item[5]
+            item_status = item[7]
+            transfer_item = get_transfer_api(item_uuid)
+            transfer_status = transfer_item["status"]
+            if item_status is not transfer_status:
+                db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, transfer_status, item_uuid)
+                if transfer_status is AppConstants.FAILED:
+                    restart_transfer_api_db(item_uuid)
+            if transfer_status is AppConstants.COMPLETE and item[6] is not None:
+                source = get_source_db(item[1])
+                move_source_to_done(str(AppConstants.SOURCE_DICT[source[2]]) + "/" + str(source[2]), item_uuid)
     else:
         write_log("No Transfer in DB.", "[INFO]")
     return
 
 
-def check_delete_dates():
-    pass
-
-
 def clean_db():
     write_log("Cleaned DB", "[INFO]")
     pass
+
+
+def get_source_db(_id):
+    return db_handler(AppConstants.SOURCE, AppConstants.ONE_SOURCE_ID, _id)
 
 
 def get_sources_from_db():
@@ -102,7 +111,7 @@ def refresh_source_db(list_new_source):
     return
 
 
-def get_transfer_db():
+def get_transfers_db():
     return db_handler(AppConstants.TRANSFER, AppConstants.GET_ALL)
 
 

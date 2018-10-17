@@ -14,3 +14,4 @@ mkdir ../source/ebooks
 mkdir ../source/retro
 mkdir ../source/repo
 mkdir ../source/done
+mkdir ../source/failed
