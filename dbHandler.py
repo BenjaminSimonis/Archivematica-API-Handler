@@ -58,6 +58,8 @@ def transfer_handler(cursor, method, p_list):
         answer = update_sip_uuid_transfer(cursor, p_list)
     elif method == AppConstants.UPDATE_STATUS_TRANSFER:
         answer = update_transfer_status(cursor, p_list)
+    elif method == AppConstants.COUNT_FAILED_TRANSFER:
+        answer = count_failed_transfer(cursor, p_list)
     else:
         write_log('dbHandler.py\t\"' + str(method) + '\" is not a supported method!', "[ERROR]")
     return answer
@@ -82,15 +84,15 @@ def source_handler(cursor, method, p_list):
     return answer
 
 
-##################################
-# Methods for the database itself
-##################################
 def create_db_connection():
     db_exists()
     conn = sqlite3.connect(str(AppConstants.DB_FILE))
     return conn
 
 
+##################################
+# Methods for the database itself
+##################################
 def db_exists():
     if not os.path.isfile(AppConstants.DB_FILE):
         write_log("dbHandler.py:\tNo DB found.", "[INFO]")
@@ -109,9 +111,6 @@ def create_db():
     return
 
 
-##################################
-# Methods for the transfer table
-##################################
 def get_transfer_list(cursor):
     cursor.execute(str(AppConstants.ALL_TRANSFERS))
     tuple_list = cursor.fetchall()
@@ -124,6 +123,9 @@ def get_transfer_list(cursor):
         return tuple_list
 
 
+##################################
+# Methods for the transfer table
+##################################
 def get_transfer(cursor, uuid):
     cursor.execute(str(AppConstants.ONE_TRANSFER_UUID), (uuid,))
     transfer = cursor.fetchone()
@@ -147,7 +149,6 @@ def delete_transfer(cursor, transfer_id):
         write_log("dbHandler.py:\tdelete_transfer:\tSomething went wrong: Rowcount = " + str(cursor.rowcount), "[ERROR]")
 
 
-# Returns True, if no transfer already exists. Otherwise it returns the transfer ID
 def exist_transfer(cursor, source_id):
     cursor.execute(str(AppConstants.ONE_TRANSFER_SOURCE_ID), (source_id,))
     transfer = cursor.fetchone()
@@ -159,7 +160,7 @@ def exist_transfer(cursor, source_id):
         return False
 
 
-# Params: sourceID, transfername, accessionnumber, uuid, status, processingconf
+# Returns True, if no transfer already exists. Otherwise it returns the transfer ID
 def insert_transfer(cursor, params):
     if exist_transfer(cursor, params[0]) is False:
         cursor.execute(str(AppConstants.INSERT_TRANSFER), (params[0], params[1], AppConstants.TRANSFER, params[2],
@@ -172,18 +173,18 @@ def insert_transfer(cursor, params):
     return False
 
 
-# Updates the transfer status in transfer table and make rollback in sources if failed
+# Params: sourceID, transfername, accessionnumber, uuid, status, processingconf
 def update_transfer_status(cursor, params):
     cursor.execute(str(AppConstants.UPDATE_STATUS_TRANSFER), (params[0], params[1],))
     if params[0] == str(AppConstants.FAILED):
         transfer = get_transfer(cursor, params[1])
         update_source_started(cursor, transfer[1], 0)
-        cursor.execute(str(AppConstants.UPDATE_FAILED_COUNTER_TRANSFER), ((int(transfer[10]) + 1), transfer[5]))
     if cursor.rowcount == 1:
         write_log("dbHandler.py:\tupdate_transfer_status:\t" + str(params), "[INFO]")
         return True
 
 
+# Updates the transfer status in transfer table and make rollback in sources if failed
 def update_sip_uuid_transfer(cursor, p_list):
     cursor.execute(str(AppConstants.SELECT_SIP_UUID_TRANSFER), (p_list[0],))
     transfer = list(cursor.fetchone())
@@ -198,6 +199,11 @@ def update_sip_uuid_transfer(cursor, p_list):
     else:
         write_log("dbHandler.py:\tupdate_sip_uuid_transfer:\tTransfer has already a SIP UUID: " + str(p_list), "[DEBUG]")
         return True
+
+
+def count_failed_transfer(cursor, p_list):
+    cursor.execute(str(AppConstants.COUNT_FAILED_TRANSFER), (p_list[0], ))
+    return cursor.fetchone()
 
 
 ################################

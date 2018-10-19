@@ -61,15 +61,17 @@ class AppConstants:
         self._USER_INPUT = "USER_INPUT"
         self._COMPLETE = "COMPLETE"
         self._PROCESSING = "PROCESSING"
+        self._TYPE_TRANSFER = "transfer"
+        self._TYPE_INGEST = "SIP"
 
         # Database constants
         self._DB_FILE = self._HANDLER_PATH + "storage.db"
 
-        # TODO: type entfernen, abhängigkeiten prüfen, Arrays mit neuen zahlen beschreiben
+        # TODO: type + failed entfernen, abhängigkeiten prüfen, Arrays mit neuen zahlen beschreiben
         self._CREATE_TRANSFER_TABLE = "CREATE TABLE transfer (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                                  source INTEGER NOT NULL, tname TEXT NOT NULL, type TEXT NOT NULL,\
                                  acnumber INTEGER, t_uuid TEXT NOT NULL, i_uuid TEXT, status TEXT NOT NULL, \
-                                 deletedate INTEGER, procconf TEXT NOT NULL, failed INTEGER NOT NULL DEFAULT 0, \
+                                 deletedate INTEGER, procconf TEXT NOT NULL, \
                                  FOREIGN KEY (source) REFERENCES sources(_id));"
 
         # TODO: Add column ingest_finished
@@ -83,14 +85,14 @@ class AppConstants:
                         VALUES (?,?,?,?,?,?,?);"
         self._UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE t_uuid = ?;"
         self._ALL_TRANSFERS = "SELECT * FROM transfer;"
-        self._ALL_NOT_COMPLETED_TRANSFERS
+        self._ALL_NOT_COMPLETED_TRANSFERS = 'SELECT * FROM transer WHERE NOT status = "' + str(self.COMPLETE) + '";'
         self._ALL_PROCESSING_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
         self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._SELECT_SIP_UUID_TRANSFER = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._UPDATE_SIP_UUID_TRANSFER = "UPDATE transfer SET i_uuid = ?, type = ? WHERE t_uuid = ?;"
-        self._UPDATE_FAILED_COUNTER_TRANSFER = "UPDATE transfer SET failed = ? WHERE t_uuid = ?;"
+        self._COUNT_FAILED_TRANSFER = 'SELECT COUNT(*) FROM transfer WHERE status = "' + str(self.FAILED) + '" AND source = ?;'
 
         # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
@@ -243,6 +245,10 @@ class AppConstants:
         return self._ALL_TRANSFERS
 
     @property
+    def ALL_NOT_COMPLETED_TRANSFERS(self):
+        return self._ALL_NOT_COMPLETED_TRANSFERS
+
+    @property
     def ALL_PROCESSING_TRANSFERS(self):
         return self._ALL_PROCESSING_TRANSFERS
 
@@ -267,8 +273,8 @@ class AppConstants:
         return self._UPDATE_SIP_UUID_TRANSFER
 
     @property
-    def UPDATE_FAILED_COUNTER_TRANSFER(self):
-        return self._UPDATE_FAILED_COUNTER_TRANSFER
+    def COUNT_FAILED_TRANSFER(self):
+        return self._COUNT_FAILED_TRANSFER
 
     @property
     def DELETE_SOURCE(self):
@@ -355,6 +361,14 @@ class AppConstants:
     @property
     def PROCESSING(self):
         return self._PROCESSING
+
+    @property
+    def TYPE_TRANSFER(self):
+        return self._TYPE_TRANSFER
+
+    @property
+    def TYPE_INGEST(self):
+        return self._TYPE_INGEST
 
     @property
     def SOURCE_DICT(self):

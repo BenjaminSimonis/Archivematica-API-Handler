@@ -32,34 +32,38 @@ def insert_transfer_db(s_id, s_name, acnumber, uuid, status, conf):
 
 def restart_transfer_api_db(t_uuid):
     failed_transfer = db_handler(AppConstants.TRANSFER, AppConstants.ONE_TRANSFER_UUID, t_uuid)
-    if failed_transfer[10] <= 2:
+    failed_counter = db_handler(AppConstants.TYPE_TRANSFER, AppConstants.COUNT_FAILED_TRANSFER, failed_transfer[1])
+    if failed_counter <= 2:
         start_transfer_api(failed_transfer)
     else:
         failed_source = db_handler(AppConstants.SOURCE, AppConstants.ONE_SOURCE_ID, failed_transfer[1])
-        path_failed_source = str(AppConstants.SOURCE_LIST[failed_source[2]]) + "/" + str(failed_source[1])
-        if exists(path_failed_source):
+        path_of_failed_source = str(AppConstants.SOURCE_LIST[failed_source[2]]) + "/" + str(failed_source[1])
+        if exists(path_of_failed_source):
             write_log("Ingest " + t_uuid + " failed too often. Please check source!", "[FAILED]")
-            move(path_failed_source, str(AppConstants.FAILED_SOURCE_PATH))
+            move(path_of_failed_source, str(AppConstants.FAILED_SOURCE_PATH))
     return
 
 
 # TODO: When db_list has entries, check for updates from API. Ignore all finished Ingests in db_list.
 # TODO: Implement delete routine for new finished items from DB after check with API
-# TODO: Check if item[6] (i_uuid) is empty. when empty, update that shit
 def refresh_transfer_list_db():
     db_list = get_transfers_db()
     if len(db_list) > 0:
         for item in db_list:
-            item_uuid = item[5]
-            item_status = item[7]
+            item_uuid = item[5]     # item[5] = t_uuid in transfer table
+            item_status = item[7]   # item[7] = status in transfer table
             transfer_item = get_transfer_api(item_uuid)
             transfer_status = transfer_item["status"]
+            transfer_type = transfer_item["type"]
             if item_status is not transfer_status:
                 db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, transfer_status, item_uuid)
                 if transfer_status is AppConstants.FAILED:
                     restart_transfer_api_db(item_uuid)
-            if transfer_status is AppConstants.COMPLETE and item[6] is not None:
-                source = get_source_db(item[1])
+            if (transfer_status is str(AppConstants.COMPLETE)) and (not is_ingest(transfer_item)) and transfer_type is str(AppConstants.TYPE_TRANSFER):
+                db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, AppConstants.FAILED, item_uuid)
+                restart_transfer_api_db(item_uuid)
+            elif (transfer_status is AppConstants.COMPLETE) and transfer_type is str(AppConstants.TYPE_INGEST):
+                source = get_source_db(item[1])     # item[1] = source in transfer table
                 move_source_to_done(str(AppConstants.SOURCE_DICT[source[2]]) + "/" + str(source[2]), item_uuid)
     else:
         write_log("No Transfer in DB.", "[INFO]")
@@ -121,13 +125,21 @@ def get_active_transfers_db():
 
 
 # Returns JSON Body of an UUID from transfer or ingest tab, when available
+# Also checks if something went wrong when switching from transfer to ingest tab
 def get_transfer_api(uuid):
     t_status = json.loads(status_transfer(uuid).text)
-    if "sip_uuid" in t_status:
+    if is_ingest(t_status):
         if db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_SIP_UUID_TRANSFER, uuid, t_status["sip_uuid"]):
             return json.loads(status_ingest(t_status["sip_uuid"]).text)
     else:
         return t_status
+
+
+def is_ingest(json_payload_as_text):
+    if "sip_uuid" in json_payload_as_text:
+        return True
+    else:
+        return False
 
 
 def update_source(id):
