@@ -49,6 +49,7 @@ class AppConstants:
         # Miscellaneous constants
         self._SOURCE = "SOURCE"
         self._TRANSFER = "TRANSFER"
+        self._CLEANING = "CLEANING"
         self._INGEST = "INGEST"
         self._GET_ALL = "GET_ALL"
         self._GET_ONE = "GET_ONE"
@@ -78,6 +79,10 @@ class AppConstants:
         self._CREATE_SOURCE_TABLE = "CREATE TABLE sources (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
                                 oname TEXT NOT NULL, type TEXT NOT NULL, inserted timestamp NOT NULL, \
                                 transfer_started INTEGER DEFAULT 0, started timestamp);"
+
+        # Cleaning Queries
+        self._CLEAN_FINISHED_INGESTS_SOURCE = "DELETE FROM source WHERE oname = ?;"
+        self._CLEAN_FINISHED_INGESTS_TRANSFER = "DELETE FROM transfer WHERE source = ?;"
 
         # Transfer Table Queries
         self._DELETE_TRANSFER = "DELETE FROM transfer WHERE _id = ?;"
@@ -229,6 +234,14 @@ class AppConstants:
         return self._CREATE_SOURCE_TABLE
 
     @property
+    def CLEAN_FINISHED_INGESTS_SOURCE(self):
+        return self._CLEAN_FINISHED_INGESTS_SOURCE
+
+    @property
+    def CLEAN_FINISHED_INGESTS_TRANSFER(self):
+        return self._CLEAN_FINISHED_INGESTS_TRANSFER
+
+    @property
     def DELETE_TRANSFER(self):
         return self._DELETE_TRANSFER
 
@@ -313,6 +326,10 @@ class AppConstants:
     @property
     def TRANSFER(self):
         return self._TRANSFER
+
+    @property
+    def CLEANING(self):
+        return self._CLEANING
 
     @property
     def INGEST(self):

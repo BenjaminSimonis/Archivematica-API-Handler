@@ -10,7 +10,7 @@ from apiHandler import status_transfer, status_ingest, start_transfer
 from constants import AppConstants
 from dbHandler import db_handler
 from logger import write_log
-from sourceHandler import move_source_to_done
+from sourceHandler import move_source_to_done, delete_ingested_source
 
 AppConstants = AppConstants()
 
@@ -180,6 +180,7 @@ def init():
     list_source = AppConstants.SOURCE_LIST
     compare_source_db(list_source, list_db)
     refresh_transfer_list_db()
+    delete_ingested_source()
     return
 
 

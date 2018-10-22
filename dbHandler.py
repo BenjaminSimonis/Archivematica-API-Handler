@@ -26,6 +26,8 @@ def db_handler(db_type, method, *params):
         answer = source_handler(cursor, method, params)
     elif db_type == AppConstants.TRANSFER:
         answer = transfer_handler(cursor, method, params)
+    elif db_type == AppConstants.CLEANING:
+        answer = clean_db(cursor, params[0])
     else:
         write_log('dbHandler.py:\t\"' + str(db_type) + '\" is not a supported type!', "[ERROR]")
     if (method is AppConstants.GET_ALL) or (method is AppConstants.GET_ONE):
@@ -283,3 +285,15 @@ def update_source_started(cursor, source_id, started):
     else:
         write_log("dbHandler.py:\tupdate_source_started:\tFailed updating: " + str(source_id) + " - " + str(started), "[INFO]")
         return False
+
+
+##########################################
+## Clean finally ingested items from DB ##
+##########################################
+
+def clean_db(cursor, oname):
+    cursor.execute(str(AppConstants.ONE_SOURCE_NAME), (oname,))
+    source_tuple = cursor.fetchone()
+    cursor.execute(str(AppConstants.CLEAN_FINISHED_INGESTS_TRANSFER), (source_tuple[0],))
+    cursor.execute(str(AppConstants.CLEAN_FINISHED_INGESTS_SOURCE), (oname,))
+    return True
