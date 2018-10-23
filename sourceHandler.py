@@ -43,7 +43,7 @@ def check_delete_dates(path, done_dir):
         if item.startswith("delete"):
             itemparts = item.split("_")
             write_log("sourceHandler.py:\t" + str(itemparts), "[DEBUG]")
-            if (itemparts[1] == path) and (itemparts[2] < datetime.now()):
+            if (itemparts[1] == path) and (datetime.strptime(itemparts[2], '%Y-%m-%d %H:%M:%S.%f') < datetime.now()):
                 return True
             elif itemparts[1] == path:
                 return False

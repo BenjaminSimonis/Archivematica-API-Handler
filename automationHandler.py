@@ -70,11 +70,6 @@ def refresh_transfer_list_db():
     return
 
 
-def clean_db():
-    write_log("Cleaned DB", "[INFO]")
-    pass
-
-
 def get_source_db(_id):
     return db_handler(AppConstants.SOURCE, AppConstants.ONE_SOURCE_ID, _id)
 
@@ -155,7 +150,7 @@ def start_transfer_auto():
 
 
 def start_transfer_api(*transfer):
-    if not transfer:
+    if not transfer[0]:
         new_ingest = get_unstarted_source_from_db()
     else:
         new_ingest = transfer

@@ -234,7 +234,7 @@ def get_unstarted_source(cursor):
     cursor.execute(str(AppConstants.UNSTARTED_SOURCE))
     source_list = list(cursor.fetchall())
     for source in source_list:
-        if (source[3] + timedelta(days=1)) < datetime.now():
+        if (datetime.strptime(source[3], '%Y-%m-%d %H:%M:%S.%f') + timedelta(days=1)) < datetime.now():
             write_log("dbHandler.py:\tget_unstarted_source:\t" + str(source), "[DEBUG]")
             return source
     write_log("dbHandler.py:\tget_unstarted_source:\tNo startable source found!", "[DEBUG]")
@@ -278,7 +278,10 @@ def insert_source(cursor, oname):
 
 # First check the started status, then make a update. Otherwise return false
 def update_source_started(cursor, source_id, started):
-    cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (1, started, source_id,))
+    if started == 1:
+        cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (started, datetime.now(), source_id,))
+    else:
+        cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (started, 0, source_id,))
     if cursor.rowcount == 1:
         write_log("dbHandler.py:\tupdate_source_started:\t" + str(source_id) + " - " + str(started), "[INFO]")
         return True
