@@ -60,6 +60,8 @@ def transfer_handler(cursor, method, p_list):
         answer = update_sip_uuid_transfer(cursor, p_list)
     elif method == AppConstants.UPDATE_STATUS_TRANSFER:
         answer = update_transfer_status(cursor, p_list)
+    elif method == AppConstants.UPDATE_DELETE_DATE:
+        answer = update_transfer_delete_date(cursor, p_list)
     elif method == AppConstants.COUNT_FAILED_TRANSFER:
         answer = count_failed_transfer(cursor, p_list)
     else:
@@ -73,6 +75,8 @@ def source_handler(cursor, method, p_list):
         answer = get_source_list(cursor)
     elif method == AppConstants.GET_ONE:
         answer = get_source(cursor, p_list)
+    elif method == AppConstants.ONE_SOURCE_ID:
+        answer = get_source_by_id(cursor, p_list[0])
     elif method == AppConstants.GET_UNSTARTED:
         answer = get_unstarted_source(cursor)
     elif method == AppConstants.INSERT:
@@ -203,6 +207,16 @@ def update_sip_uuid_transfer(cursor, p_list):
         return True
 
 
+def update_transfer_delete_date(cursor, p_list):
+    cursor.execute(str(AppConstants.UPDATE_DELETE_DATE), (p_list[0], p_list[1],))
+    if cursor.rowcount == 1:
+        write_log("dbHandler.py:\tupdate_transfer_delete_date:\tUpdated delete date: " + str(p_list), "[INFO]")
+        return True
+    else:
+        write_log("dbHandler.py:\tupdate_transfer_delete_date:\tUpdate delete date failed: " + str(p_list), "[ERROR]")
+        return False
+
+
 def count_failed_transfer(cursor, p_list):
     cursor.execute(str(AppConstants.COUNT_FAILED_TRANSFER), (p_list[0], ))
     return cursor.fetchone()
@@ -227,6 +241,13 @@ def get_source(cursor, oname):
     cursor.execute(str(AppConstants.ONE_SOURCE_NAME), (oname[0],))
     source = cursor.fetchone()
     write_log("dbHandler.py:\tget_source:\t" + str(source), "[DEBUG]")
+    return source
+
+
+def get_source_by_id(cursor, param):
+    cursor.execute(str(AppConstants.ONE_SOURCE_ID), (param,))
+    source = cursor.fetchone()
+    write_log("dbHandler.py:\tget_source_by_id:\t" + str(source), "[DEBUG]")
     return source
 
 

@@ -72,7 +72,7 @@ class AppConstants:
         self._CREATE_TRANSFER_TABLE = "CREATE TABLE transfer (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                                  source INTEGER NOT NULL, tname TEXT NOT NULL, type TEXT NOT NULL,\
                                  acnumber INTEGER, t_uuid TEXT NOT NULL, i_uuid TEXT, status TEXT NOT NULL, \
-                                 deletedate INTEGER, procconf TEXT NOT NULL, \
+                                 deletedate timestamp, procconf TEXT NOT NULL, \
                                  FOREIGN KEY (source) REFERENCES sources(_id));"
 
         # TODO: Add column ingest_finished
@@ -97,6 +97,7 @@ class AppConstants:
         self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._SELECT_SIP_UUID_TRANSFER = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._UPDATE_SIP_UUID_TRANSFER = "UPDATE transfer SET i_uuid = ?, type = ? WHERE t_uuid = ?;"
+        self._UPDATE_DELETE_DATE = "UPDATE transfer SET deletedate = ? WHERE i_uuid = ?;"
         self._COUNT_FAILED_TRANSFER = 'SELECT COUNT(*) FROM transfer WHERE status = "' + str(self.FAILED) + '" AND source = ?;'
 
         # Source Table Queries
@@ -284,6 +285,10 @@ class AppConstants:
     @property
     def UPDATE_SIP_UUID_TRANSFER(self):
         return self._UPDATE_SIP_UUID_TRANSFER
+
+    @property
+    def UPDATE_DELETE_DATE(self):
+        return self._UPDATE_DELETE_DATE
 
     @property
     def COUNT_FAILED_TRANSFER(self):

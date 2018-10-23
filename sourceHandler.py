@@ -6,7 +6,7 @@ from constants import AppConstants
 from datetime import timedelta, datetime
 from dbHandler import db_handler
 from logger import write_log
-from os import getcwd, listdir
+from os import listdir
 from shutil import move, rmtree
 
 AppConstants = AppConstants()
@@ -77,7 +77,7 @@ def move_source_to_done(path, uuid):
     if is_ingest_complete(uuid):
         move(path, str(AppConstants.DONE_SOURCE_PATH))
         write_log("sourceHandler.py:\tMoved " + str(path) + " to DONE Folder", "[INFO]")
-        create_delete_date(path)
+        create_delete_date(path, uuid)
     else:
         write_log("sourceHandler.py:\tIngest " + str(uuid) + " is not completed", "[DEBUG]")
     return
@@ -86,8 +86,9 @@ def move_source_to_done(path, uuid):
 # Private method
 # Create a file with the name of the completed ingest folder with prefix "delete_" and a date in
 # 30 days as suffix in timestamp format
-def create_delete_date(path):
+def create_delete_date(path, uuid):
     delete_date = datetime.now() + timedelta(days=30)
+    db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_DELETE_DATE, delete_date, uuid)
     write_log("sourceHandler.py:\t" + str(delete_date), "[DEBUG]")
     delete_name = "delete_" + path + "_" + str(delete_date)
     write_log("sourceHandler.py:\t" + str(delete_name), "[DEBUG]")
