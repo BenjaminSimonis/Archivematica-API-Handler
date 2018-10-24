@@ -59,12 +59,12 @@ def refresh_transfer_list_db():
                 db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, transfer_status, item_uuid)
                 if transfer_status is AppConstants.FAILED:
                     restart_transfer_api_db(item_uuid)
-            if (transfer_status is str(AppConstants.COMPLETE)) and (not is_ingest(transfer_item)) and transfer_type is str(AppConstants.TYPE_TRANSFER):
+            if (transfer_status == str(AppConstants.COMPLETE)) and (not is_ingest(transfer_item)) and (transfer_type == str(AppConstants.TYPE_TRANSFER)):
                 db_handler(AppConstants.TRANSFER, AppConstants.UPDATE_STATUS_TRANSFER, AppConstants.FAILED, item_uuid)
                 restart_transfer_api_db(item_uuid)
-            elif (transfer_status is AppConstants.COMPLETE) and transfer_type is str(AppConstants.TYPE_INGEST):
+            elif (transfer_status == AppConstants.COMPLETE) and transfer_type == str(AppConstants.TYPE_INGEST):
                 source = get_source_db(item[1])     # item[1] = source in transfer table
-                move_source_to_done(str(AppConstants.SOURCE_DICT[source[2]]) + "/" + str(source[2]), item_uuid)
+                move_source_to_done(str(AppConstants.SOURCE_DICT[source[2]]) + "/" + str(source[1]), item[6])
     else:
         write_log("No Transfer in DB.", "[INFO]")
     return
@@ -115,7 +115,6 @@ def get_transfers_db():
 
 
 def get_active_transfers_db():
-    refresh_transfer_list_db()
     return db_handler(AppConstants.TRANSFER, AppConstants.GET_ACTIVE)
 
 

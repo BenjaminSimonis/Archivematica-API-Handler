@@ -81,7 +81,7 @@ class AppConstants:
                                 transfer_started INTEGER DEFAULT 0, started timestamp);"
 
         # Cleaning Queries
-        self._CLEAN_FINISHED_INGESTS_SOURCE = "DELETE FROM source WHERE oname = ?;"
+        self._CLEAN_FINISHED_INGESTS_SOURCE = "DELETE FROM sources WHERE oname = ?;"
         self._CLEAN_FINISHED_INGESTS_TRANSFER = "DELETE FROM transfer WHERE source = ?;"
 
         # Transfer Table Queries
