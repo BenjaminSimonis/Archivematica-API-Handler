@@ -1,7 +1,7 @@
 import os.path
 import sqlite3
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from constants import AppConstants
 from logger import write_log
@@ -26,6 +26,8 @@ def db_handler(db_type, method, *params):
         answer = source_handler(cursor, method, params)
     elif db_type == AppConstants.TRANSFER:
         answer = transfer_handler(cursor, method, params)
+    elif db_type == AppConstants.CLEANING:
+        answer = clean_db(cursor, params[0])
     else:
         write_log('dbHandler.py:\t\"' + str(db_type) + '\" is not a supported type!', "[ERROR]")
     if (method is AppConstants.GET_ALL) or (method is AppConstants.GET_ONE):
@@ -58,6 +60,10 @@ def transfer_handler(cursor, method, p_list):
         answer = update_sip_uuid_transfer(cursor, p_list)
     elif method == AppConstants.UPDATE_STATUS_TRANSFER:
         answer = update_transfer_status(cursor, p_list)
+    elif method == AppConstants.UPDATE_DELETE_DATE:
+        answer = update_transfer_delete_date(cursor, p_list)
+    elif method == AppConstants.COUNT_FAILED_TRANSFER:
+        answer = count_failed_transfer(cursor, p_list)
     else:
         write_log('dbHandler.py\t\"' + str(method) + '\" is not a supported method!', "[ERROR]")
     return answer
@@ -69,6 +75,8 @@ def source_handler(cursor, method, p_list):
         answer = get_source_list(cursor)
     elif method == AppConstants.GET_ONE:
         answer = get_source(cursor, p_list)
+    elif method == AppConstants.ONE_SOURCE_ID:
+        answer = get_source_by_id(cursor, p_list[0])
     elif method == AppConstants.GET_UNSTARTED:
         answer = get_unstarted_source(cursor)
     elif method == AppConstants.INSERT:
@@ -82,16 +90,15 @@ def source_handler(cursor, method, p_list):
     return answer
 
 
-##################################
-# Methods for the database itself
-##################################
 def create_db_connection():
     db_exists()
     conn = sqlite3.connect(str(AppConstants.DB_FILE))
-    write_log("dbHandler.py:\tCreate DB Connection.", "[DEBUG]")
     return conn
 
 
+##################################
+# Methods for the database itself
+##################################
 def db_exists():
     if not os.path.isfile(AppConstants.DB_FILE):
         write_log("dbHandler.py:\tNo DB found.", "[INFO]")
@@ -148,7 +155,6 @@ def delete_transfer(cursor, transfer_id):
         write_log("dbHandler.py:\tdelete_transfer:\tSomething went wrong: Rowcount = " + str(cursor.rowcount), "[ERROR]")
 
 
-# Returns True, if no transfer already exists. Otherwise it returns the transfer ID
 def exist_transfer(cursor, source_id):
     cursor.execute(str(AppConstants.ONE_TRANSFER_SOURCE_ID), (source_id,))
     transfer = cursor.fetchone()
@@ -160,7 +166,7 @@ def exist_transfer(cursor, source_id):
         return False
 
 
-# Params: sourceID, transfername, accessionnumber, uuid, status, processingconf
+# Returns True, if no transfer already exists. Otherwise it returns the transfer ID
 def insert_transfer(cursor, params):
     if exist_transfer(cursor, params[0]) is False:
         cursor.execute(str(AppConstants.INSERT_TRANSFER), (params[0], params[1], AppConstants.TRANSFER, params[2],
@@ -173,16 +179,18 @@ def insert_transfer(cursor, params):
     return False
 
 
-# Updates the transfer status in transfer table and make rollback in sources if failed
+# Params: sourceID, transfername, accessionnumber, uuid, status, processingconf
 def update_transfer_status(cursor, params):
     cursor.execute(str(AppConstants.UPDATE_STATUS_TRANSFER), (params[0], params[1],))
     if params[0] == str(AppConstants.FAILED):
-        update_source_started(cursor, get_transfer(params[0], params[1])[1], -1)
+        transfer = get_transfer(cursor, params[1])
+        update_source_started(cursor, transfer[1], 0)
     if cursor.rowcount == 1:
         write_log("dbHandler.py:\tupdate_transfer_status:\t" + str(params), "[INFO]")
         return True
 
 
+# Updates the transfer status in transfer table and make rollback in sources if failed
 def update_sip_uuid_transfer(cursor, p_list):
     cursor.execute(str(AppConstants.SELECT_SIP_UUID_TRANSFER), (p_list[0],))
     transfer = list(cursor.fetchone())
@@ -197,6 +205,21 @@ def update_sip_uuid_transfer(cursor, p_list):
     else:
         write_log("dbHandler.py:\tupdate_sip_uuid_transfer:\tTransfer has already a SIP UUID: " + str(p_list), "[DEBUG]")
         return True
+
+
+def update_transfer_delete_date(cursor, p_list):
+    cursor.execute(str(AppConstants.UPDATE_DELETE_DATE), (p_list[0], p_list[1],))
+    if cursor.rowcount == 1:
+        write_log("dbHandler.py:\tupdate_transfer_delete_date:\tUpdated delete date: " + str(p_list), "[INFO]")
+        return True
+    else:
+        write_log("dbHandler.py:\tupdate_transfer_delete_date:\tUpdate delete date failed: " + str(p_list), "[ERROR]")
+        return False
+
+
+def count_failed_transfer(cursor, p_list):
+    cursor.execute(str(AppConstants.COUNT_FAILED_TRANSFER), (p_list[0], ))
+    return cursor.fetchone()
 
 
 ################################
@@ -221,11 +244,22 @@ def get_source(cursor, oname):
     return source
 
 
+def get_source_by_id(cursor, param):
+    cursor.execute(str(AppConstants.ONE_SOURCE_ID), (param,))
+    source = cursor.fetchone()
+    write_log("dbHandler.py:\tget_source_by_id:\t" + str(source), "[DEBUG]")
+    return source
+
+
 def get_unstarted_source(cursor):
     cursor.execute(str(AppConstants.UNSTARTED_SOURCE))
-    source = cursor.fetchone()
-    write_log("dbHandler.py:\tget_unstarted_source:\t" + str(source), "[DEBUG]")
-    return source
+    source_list = list(cursor.fetchall())
+    for source in source_list:
+        if (datetime.strptime(source[3], '%Y-%m-%d %H:%M:%S.%f') + timedelta(days=1)) < datetime.now():
+            write_log("dbHandler.py:\tget_unstarted_source:\t" + str(source), "[DEBUG]")
+            return source
+    write_log("dbHandler.py:\tget_unstarted_source:\tNo startable source found!", "[DEBUG]")
+    return None
 
 
 # Items, that will be deleted, have to be checked before calling this method
@@ -265,10 +299,25 @@ def insert_source(cursor, oname):
 
 # First check the started status, then make a update. Otherwise return false
 def update_source_started(cursor, source_id, started):
-    cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (1, started, source_id,))
+    if started == 1:
+        cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (started, datetime.now(), source_id,))
+    else:
+        cursor.execute(str(AppConstants.UPDATE_STATUS_SOURCE), (started, 0, source_id,))
     if cursor.rowcount == 1:
         write_log("dbHandler.py:\tupdate_source_started:\t" + str(source_id) + " - " + str(started), "[INFO]")
         return True
     else:
         write_log("dbHandler.py:\tupdate_source_started:\tFailed updating: " + str(source_id) + " - " + str(started), "[INFO]")
         return False
+
+
+##########################################
+## Clean finally ingested items from DB ##
+##########################################
+
+def clean_db(cursor, oname):
+    cursor.execute(str(AppConstants.ONE_SOURCE_NAME), (oname,))
+    source_tuple = cursor.fetchone()
+    cursor.execute(str(AppConstants.CLEAN_FINISHED_INGESTS_TRANSFER), (source_tuple[0],))
+    cursor.execute(str(AppConstants.CLEAN_FINISHED_INGESTS_SOURCE), (oname,))
+    return True

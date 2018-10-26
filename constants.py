@@ -1,3 +1,6 @@
+from os import listdir
+
+
 class AppConstants:
 
     #########################################
@@ -14,10 +17,23 @@ class AppConstants:
         self._WORKING_PATH = "/var/archivematica"
         self._HANDLER_PATH = self._WORKING_PATH + "/Archivematica-API-Handler/"
         self._SOURCE_PATH = self._WORKING_PATH + "/source"
+        self._DONE_SOURCE_PATH = self._SOURCE_PATH + "/done"
+        self._FAILED_SOURCE_PATH = self._SOURCE_PATH + "/failed"
+
+        ########################
+        # Installations specific constants (please edit for own installation)
+        ########################
         self._EBOOK_SOURCE_PATH = self._SOURCE_PATH + "/ebooks"
         self._RETRO_SOURCE_PATH = self._SOURCE_PATH + "/retro"
-        self._FREIDOK_SOURCE_PATH = self._SOURCE_PATH + "/freidok"
-        self._DONE_SOURCE_PATH = self._SOURCE_PATH + "/done"
+        self._REPO_SOURCE_PATH = self._SOURCE_PATH + "/repo"
+        self._EBOOK = "EBOOK"
+        self._RETRO = "RETRO"
+        self._REPO = "REPO"
+        # Dict constants
+        self._SOURCE_DICT = {str(self.REPO): str(self.REPO_SOURCE_PATH),
+                             str(self.RETRO): str(self.RETRO_SOURCE_PATH),
+                             str(self.EBOOK): str(self.EBOOK_SOURCE_PATH)}
+        ##########################
 
         # Processing path constants
         self._PROCESS_PATH = self._WORKING_PATH + "/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/"
@@ -33,6 +49,7 @@ class AppConstants:
         # Miscellaneous constants
         self._SOURCE = "SOURCE"
         self._TRANSFER = "TRANSFER"
+        self._CLEANING = "CLEANING"
         self._INGEST = "INGEST"
         self._GET_ALL = "GET_ALL"
         self._GET_ONE = "GET_ONE"
@@ -45,24 +62,27 @@ class AppConstants:
         self._USER_INPUT = "USER_INPUT"
         self._COMPLETE = "COMPLETE"
         self._PROCESSING = "PROCESSING"
-        self._EBOOK = "EBOOK"
-        self._RETRO = "RETRO"
-        self._FREIDOK = "FREIDOK"
+        self._TYPE_TRANSFER = "transfer"
+        self._TYPE_INGEST = "SIP"
 
         # Database constants
         self._DB_FILE = self._HANDLER_PATH + "storage.db"
 
+        # TODO: type + failed entfernen, abhängigkeiten prüfen, Arrays mit neuen zahlen beschreiben
         self._CREATE_TRANSFER_TABLE = "CREATE TABLE transfer (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,\
                                  source INTEGER NOT NULL, tname TEXT NOT NULL, type TEXT NOT NULL,\
                                  acnumber INTEGER, t_uuid TEXT NOT NULL, i_uuid TEXT, status TEXT NOT NULL, \
-                                 deletedate INTEGER, procconf TEXT NOT NULL, failed INTEGER NOT NULL DEFAULT 0, \
+                                 deletedate timestamp, procconf TEXT NOT NULL, \
                                  FOREIGN KEY (source) REFERENCES sources(_id));"
 
-        # TODO: Add column timestamp, when source is added to db
         # TODO: Add column ingest_finished
         self._CREATE_SOURCE_TABLE = "CREATE TABLE sources (_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, \
                                 oname TEXT NOT NULL, type TEXT NOT NULL, inserted timestamp NOT NULL, \
                                 transfer_started INTEGER DEFAULT 0, started timestamp);"
+
+        # Cleaning Queries
+        self._CLEAN_FINISHED_INGESTS_SOURCE = "DELETE FROM sources WHERE oname = ?;"
+        self._CLEAN_FINISHED_INGESTS_TRANSFER = "DELETE FROM transfer WHERE source = ?;"
 
         # Transfer Table Queries
         self._DELETE_TRANSFER = "DELETE FROM transfer WHERE _id = ?;"
@@ -70,12 +90,17 @@ class AppConstants:
                         VALUES (?,?,?,?,?,?,?);"
         self._UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE t_uuid = ?;"
         self._ALL_TRANSFERS = "SELECT * FROM transfer;"
+        self._ALL_NOT_COMPLETED_TRANSFERS = 'SELECT * FROM transfer WHERE NOT status = "' + str(self.COMPLETE) + '";'
         self._ALL_PROCESSING_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
-        self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
+        self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + \
+                                 '" OR (deletedate IS NULL AND status = "' + str(self.COMPLETE) + '");'
         self._SELECT_SIP_UUID_TRANSFER = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._UPDATE_SIP_UUID_TRANSFER = "UPDATE transfer SET i_uuid = ?, type = ? WHERE t_uuid = ?;"
+        self._UPDATE_DELETE_DATE = "UPDATE transfer SET deletedate = ? WHERE i_uuid = ?;"
+        self._COUNT_FAILED_TRANSFER = 'SELECT COUNT(*) FROM transfer WHERE status = "' + str(self.FAILED)\
+                                      + '" AND source = ?;'
 
         # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"
@@ -86,10 +111,6 @@ class AppConstants:
         self._ONE_SOURCE_ID = "SELECT * FROM sources WHERE _id = ?;"
         self._UNSTARTED_SOURCE = "SELECT * FROM sources WHERE transfer_started = 0;"
 
-        # Dict constants
-        self._SOURCE_DICT = {str(self.FREIDOK): str(self.FREIDOK_SOURCE_PATH),
-                             str(self.RETRO): str(self.RETRO_SOURCE_PATH), str(self.EBOOK): str(self.EBOOK_SOURCE_PATH)}
-
         # List constants
         self._STATUS_LIST = [str(self.FAILED), str(self.REJECTED), str(self.USER_INPUT), str(self.COMPLETE),
                              str(self.PROCESSING)]
@@ -98,6 +119,42 @@ class AppConstants:
 #########################################
 ############## Properties ###############
 #########################################
+
+    ########################
+    # Installations specific constants (please edit for own installation)
+    ########################
+    @property
+    def EBOOK(self):
+        return self._EBOOK
+
+    @property
+    def RETRO(self):
+        return self._RETRO
+
+    @property
+    def REPO(self):
+        return self._REPO
+
+    @property
+    def EBOOK_SOURCE_PATH(self):
+        return self._EBOOK_SOURCE_PATH
+
+    @property
+    def RETRO_SOURCE_PATH(self):
+        return self._RETRO_SOURCE_PATH
+
+    @property
+    def REPO_SOURCE_PATH(self):
+        return self._REPO_SOURCE_PATH
+
+    @property
+    def SOURCE_LIST(self):
+        source_list = {str(self._EBOOK): listdir(str(self._EBOOK_SOURCE_PATH)),
+                       str(self._RETRO): listdir(str(self._RETRO_SOURCE_PATH)),
+                       str(self._REPO): listdir(str(self._REPO_SOURCE_PATH))}
+        return source_list
+
+    ##############################################################
 
     # API constants
 
@@ -124,20 +181,12 @@ class AppConstants:
         return self._SOURCE_PATH
 
     @property
-    def EBOOK_SOURCE_PATH(self):
-        return self._EBOOK_SOURCE_PATH
-
-    @property
-    def RETRO_SOURCE_PATH(self):
-        return self._RETRO_SOURCE_PATH
-
-    @property
-    def FREIDOK_SOURCE_PATH(self):
-        return self._FREIDOK_SOURCE_PATH
-
-    @property
     def DONE_SOURCE_PATH(self):
         return self._DONE_SOURCE_PATH
+
+    @property
+    def FAILED_SOURCE_PATH(self):
+        return self._FAILED_SOURCE_PATH
 
     # Processing path constants
 
@@ -188,6 +237,14 @@ class AppConstants:
         return self._CREATE_SOURCE_TABLE
 
     @property
+    def CLEAN_FINISHED_INGESTS_SOURCE(self):
+        return self._CLEAN_FINISHED_INGESTS_SOURCE
+
+    @property
+    def CLEAN_FINISHED_INGESTS_TRANSFER(self):
+        return self._CLEAN_FINISHED_INGESTS_TRANSFER
+
+    @property
     def DELETE_TRANSFER(self):
         return self._DELETE_TRANSFER
 
@@ -202,6 +259,10 @@ class AppConstants:
     @property
     def ALL_TRANSFERS(self):
         return self._ALL_TRANSFERS
+
+    @property
+    def ALL_NOT_COMPLETED_TRANSFERS(self):
+        return self._ALL_NOT_COMPLETED_TRANSFERS
 
     @property
     def ALL_PROCESSING_TRANSFERS(self):
@@ -226,6 +287,14 @@ class AppConstants:
     @property
     def UPDATE_SIP_UUID_TRANSFER(self):
         return self._UPDATE_SIP_UUID_TRANSFER
+
+    @property
+    def UPDATE_DELETE_DATE(self):
+        return self._UPDATE_DELETE_DATE
+
+    @property
+    def COUNT_FAILED_TRANSFER(self):
+        return self._COUNT_FAILED_TRANSFER
 
     @property
     def DELETE_SOURCE(self):
@@ -264,6 +333,10 @@ class AppConstants:
     @property
     def TRANSFER(self):
         return self._TRANSFER
+
+    @property
+    def CLEANING(self):
+        return self._CLEANING
 
     @property
     def INGEST(self):
@@ -314,16 +387,12 @@ class AppConstants:
         return self._PROCESSING
 
     @property
-    def EBOOK(self):
-        return self._EBOOK
+    def TYPE_TRANSFER(self):
+        return self._TYPE_TRANSFER
 
     @property
-    def RETRO(self):
-        return self._RETRO
-
-    @property
-    def FREIDOK(self):
-        return self._FREIDOK
+    def TYPE_INGEST(self):
+        return self._TYPE_INGEST
 
     @property
     def SOURCE_DICT(self):

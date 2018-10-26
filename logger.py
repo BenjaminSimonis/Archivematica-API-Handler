@@ -15,6 +15,11 @@ def open_error_writer():
     return f
 
 
+def open_delete_writer():
+    f = open("logs/delete.log", "a")
+    return f
+
+
 def create_timestamp():
     return str(datetime.now())
 
@@ -29,9 +34,12 @@ def debug_mode():
 def write_log(message, log_type):
     if log_type is "[ERROR]":
         logger = open_error_writer()
+    elif log_type is "[DELETE]":
+        logger = open_delete_writer()
     else:
         logger = open_log_writer()
-    if (log_type == "[DEBUG]" and debug_mode()) or log_type == "[INFO]":
+    if (log_type == "[DEBUG]" and debug_mode()) or log_type == "[INFO]" \
+            or log_type == "[ERROR]" or log_type == "[DELETE]":
         logger.write(log_type + "\t" + create_timestamp() + "\t" + message + "\n")
     logger.flush()
     logger.close()

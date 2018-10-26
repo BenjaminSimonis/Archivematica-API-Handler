@@ -1,4 +1,5 @@
-# Archivematica-API-Handler
+![made with python3](https://img.shields.io/badge/made%20with-python3-blue.svg)
+# Archivematica-API-Handler 
 
 A more easier API handler to make POST-Request and other calls with an ordinary body instead of an JSON body until the bug is fixed from Artefactual.
 https://groups.google.com/forum/#!topic/archivematica/IvkI4xScFTU
@@ -11,8 +12,9 @@ https://groups.google.com/forum/#!topic/archivematica/IvkI4xScFTU
 
 ## Installation
 
-- clone this project in /var/archivematica/
+- Clone this project in /var/archivematica/
 - sudo bash install.sh
+- Edit credentials.py 
 
 
 ## Commands
