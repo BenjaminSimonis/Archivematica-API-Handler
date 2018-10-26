@@ -47,7 +47,7 @@ def restart_transfer_api_db(t_uuid):
 # TODO: When db_list has entries, check for updates from API. Ignore all finished Ingests in db_list.
 # TODO: Implement delete routine for new finished items from DB after check with API
 def refresh_transfer_list_db():
-    db_list = get_transfers_db()
+    db_list = get_active_transfers_db()
     if len(db_list) > 0:
         for item in db_list:
             item_uuid = item[5]     # item[5] = t_uuid in transfer table
@@ -65,8 +65,8 @@ def refresh_transfer_list_db():
             elif (transfer_status == AppConstants.COMPLETE) and transfer_type == str(AppConstants.TYPE_INGEST):
                 source = get_source_db(item[1])     # item[1] = source in transfer table
                 move_source_to_done(str(AppConstants.SOURCE_DICT[source[2]]) + "/" + str(source[1]), item[6])
-    else:
-        write_log("No Transfer in DB.", "[INFO]")
+#    else:
+#        write_log("No Transfer in DB.", "[INFO]")
     return
 
 

@@ -90,15 +90,17 @@ class AppConstants:
                         VALUES (?,?,?,?,?,?,?);"
         self._UPDATE_STATUS_TRANSFER = "UPDATE transfer SET status = ? WHERE t_uuid = ?;"
         self._ALL_TRANSFERS = "SELECT * FROM transfer;"
-        self._ALL_NOT_COMPLETED_TRANSFERS = 'SELECT * FROM transer WHERE NOT status = "' + str(self.COMPLETE) + '";'
+        self._ALL_NOT_COMPLETED_TRANSFERS = 'SELECT * FROM transfer WHERE NOT status = "' + str(self.COMPLETE) + '";'
         self._ALL_PROCESSING_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
         self._ONE_TRANSFER_UUID = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._ONE_TRANSFER_SOURCE_ID = "SELECT * FROM transfer WHERE source = ?;"
-        self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + '";'
+        self._ACTIVE_TRANSFERS = 'SELECT * FROM transfer WHERE status = "' + str(self.PROCESSING) + \
+                                 '" OR (deletedate IS NULL AND status = "' + str(self.COMPLETE) + '");'
         self._SELECT_SIP_UUID_TRANSFER = "SELECT * FROM transfer WHERE t_uuid = ?;"
         self._UPDATE_SIP_UUID_TRANSFER = "UPDATE transfer SET i_uuid = ?, type = ? WHERE t_uuid = ?;"
         self._UPDATE_DELETE_DATE = "UPDATE transfer SET deletedate = ? WHERE i_uuid = ?;"
-        self._COUNT_FAILED_TRANSFER = 'SELECT COUNT(*) FROM transfer WHERE status = "' + str(self.FAILED) + '" AND source = ?;'
+        self._COUNT_FAILED_TRANSFER = 'SELECT COUNT(*) FROM transfer WHERE status = "' + str(self.FAILED)\
+                                      + '" AND source = ?;'
 
         # Source Table Queries
         self._DELETE_SOURCE = "DELETE FROM sources WHERE _id = ?;"

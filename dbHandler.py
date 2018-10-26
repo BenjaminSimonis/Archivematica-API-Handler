@@ -117,6 +117,9 @@ def create_db():
     return
 
 
+##################################
+# Methods for the transfer table
+##################################
 def get_transfer_list(cursor):
     cursor.execute(str(AppConstants.ALL_TRANSFERS))
     tuple_list = cursor.fetchall()
@@ -129,9 +132,6 @@ def get_transfer_list(cursor):
         return tuple_list
 
 
-##################################
-# Methods for the transfer table
-##################################
 def get_transfer(cursor, uuid):
     cursor.execute(str(AppConstants.ONE_TRANSFER_UUID), (uuid,))
     transfer = cursor.fetchone()
