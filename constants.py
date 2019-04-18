@@ -36,12 +36,12 @@ class AppConstants:
         ##########################
 
         # Processing path constants
-        self._PROCESS_PATH = self._WORKING_PATH + "/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/"
-        self._PROCESS_DEFAULT = "defaultProcessingMCP.xml"
-        self._PROCESS_AUTOMATED = "automatedProcessingMCP.xml"
+        #self._PROCESS_PATH = self._WORKING_PATH + "/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/"
+        self._PROCESS_DEFAULT = "default"
+        self._PROCESS_AUTOMATED = "automated"
         self._PROCESS_PATH_AUTOMATED = self._PROCESS_PATH + self._PROCESS_AUTOMATED
         self._PROCESS_PATH_DEFAULT = self._PROCESS_PATH + self._PROCESS_DEFAULT
-        self._LOCAL_PROCESS_DIR = "processingConfs/"
+        #self._LOCAL_PROCESS_DIR = "processingConfs/"
 
         self._DEBUG_FILE = "DEBUG"
         self._DEBUG_PATH = self._HANDLER_PATH + self._DEBUG_FILE
@@ -64,6 +64,8 @@ class AppConstants:
         self._PROCESSING = "PROCESSING"
         self._TYPE_TRANSFER = "transfer"
         self._TYPE_INGEST = "SIP"
+        self._DEFAULT = "default"
+        self._AUTOMATED = "automated"
 
         # Database constants
         self._DB_FILE = self._HANDLER_PATH + "storage.db"
@@ -210,9 +212,9 @@ class AppConstants:
     def PROCESS_PATH_DEFAULT(self):
         return self._PROCESS_PATH_DEFAULT
 
-    @property
-    def LOCAL_PROCESS_DIR(self):
-        return self._LOCAL_PROCESS_DIR
+    #@property
+   # def LOCAL_PROCESS_DIR(self):
+  #      return self._LOCAL_PROCESS_DIR
 
     @property
     def DEBUG_FILE(self):
@@ -401,3 +403,11 @@ class AppConstants:
     @property
     def STATUS_LIST(self):
         return self._STATUS_LIST
+
+    @property
+    def DEFAULT(self):
+        return self._DEFAULT
+
+    @property
+    def AUTOMATED(self):
+        return self._AUTOMATED

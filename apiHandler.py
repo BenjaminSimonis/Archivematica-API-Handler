@@ -9,7 +9,6 @@ from time import sleep
 from constants import AppConstants
 from credentials import *
 from logger import write_log
-import processingHandler
 AppConstants = AppConstants()
 
 
@@ -29,7 +28,6 @@ def start_transfer(name, type, accession, path, procFile):
     dataset = {"name": name, "type": type, "accession": accession, "paths[]": [create_base64_path(path)],
                "row_ids[]": [""]}
     write_log("apiHandler.py:\t" + str(dataset), "[DEBUG]")
-    processingHandler.compare_processing_file(procFile)
     return start_and_approve(post_request(url, dataset))
 
 
