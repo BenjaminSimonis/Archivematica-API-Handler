@@ -36,12 +36,11 @@ class AppConstants:
         ##########################
 
         # Processing path constants
-        #self._PROCESS_PATH = self._WORKING_PATH + "/sharedDirectory/sharedMicroServiceTasksConfigs/processingMCPConfigs/"
-        self._PROCESS_DEFAULT = "default"
-        self._PROCESS_AUTOMATED = "automated"
-        self._PROCESS_PATH_AUTOMATED = self._PROCESS_PATH + self._PROCESS_AUTOMATED
-        self._PROCESS_PATH_DEFAULT = self._PROCESS_PATH + self._PROCESS_DEFAULT
-        #self._LOCAL_PROCESS_DIR = "processingConfs/"
+        self._PROCESS_CONF = "processingMCP.xml"
+        self._PROCESS_DEFAULT = "default/"
+        self._PROCESS_AUTOMATED = "automated/"
+        self._PROCESS_PATH_AUTOMATED = self._PROCESS_AUTOMATED + self._PROCESS_CONF
+        self._PROCESS_PATH_DEFAULT = self._PROCESS_DEFAULT + self._PROCESS_CONF
 
         self._DEBUG_FILE = "DEBUG"
         self._DEBUG_PATH = self._HANDLER_PATH + self._DEBUG_FILE
@@ -193,8 +192,8 @@ class AppConstants:
     # Processing path constants
 
     @property
-    def PROCESS_PATH(self):
-        return self._PROCESS_PATH
+    def PROCESS_CONF(self):
+        return self._PROCESS_CONF
 
     @property
     def PROCESS_DEFAULT(self):
@@ -211,10 +210,6 @@ class AppConstants:
     @property
     def PROCESS_PATH_DEFAULT(self):
         return self._PROCESS_PATH_DEFAULT
-
-    #@property
-   # def LOCAL_PROCESS_DIR(self):
-  #      return self._LOCAL_PROCESS_DIR
 
     @property
     def DEBUG_FILE(self):

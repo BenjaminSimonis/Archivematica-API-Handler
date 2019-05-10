@@ -2,7 +2,6 @@ from os import remove
 from os.path import exists
 
 import help
-import processingHandler
 import sys
 
 from apiHandler import start_partial_reingest, start_full_reingest, completed_ingests, \
@@ -77,7 +76,6 @@ def init():
         return
     elif method == "test":
         write_log("manualHandler.py:\ttest", "[DEBUG]")
-        processingHandler.compare_processing_file(sys.argv[2])
         return
     else:
         write_log("manualHandler.py\tUse one of the documented keywords! You can list them with der parameter help.", "[ERROR]")

@@ -156,7 +156,7 @@ def start_transfer_api(*transfer):
     if new_ingest is not None:
         r = start_transfer(new_ingest[1], new_ingest[2], new_ingest[0],
                            (str(AppConstants.SOURCE_DICT[new_ingest[2]]) + "/" + new_ingest[1]),
-                           AppConstants.PROCESS_AUTOMATED)
+                           AppConstants.AUTOMATED)
         if r is not None:
             if r["status"] == 200:
                 if update_source(new_ingest[0]):

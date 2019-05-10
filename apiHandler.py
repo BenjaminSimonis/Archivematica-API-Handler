@@ -9,6 +9,7 @@ from time import sleep
 from constants import AppConstants
 from credentials import *
 from logger import write_log
+from processingHandler import add_conf_file
 AppConstants = AppConstants()
 
 
@@ -22,12 +23,13 @@ AppConstants = AppConstants()
 # Start a transfer
 # Parameters: JSON body
 # Response: JSON
-def start_transfer(name, type, accession, path, procFile):
+def start_transfer(name, type, accession, path, conf):
     url = str(AppConstants.URL_TRANSFER) + "/start_transfer/"
     write_log("apiHandler.py:\tStarting Transfer", "[INFO]")
     dataset = {"name": name, "type": type, "accession": accession, "paths[]": [create_base64_path(path)],
                "row_ids[]": [""]}
     write_log("apiHandler.py:\t" + str(dataset), "[DEBUG]")
+    add_conf_file(path, conf)
     return start_and_approve(post_request(url, dataset))
 
 
