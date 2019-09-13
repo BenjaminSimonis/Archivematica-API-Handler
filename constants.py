@@ -8,6 +8,30 @@ class AppConstants:
     #########################################
 
     def __init__(self):
+        # General Keywords
+        self._DEBUG = "DEBUG"
+        self._GENERAL = "GENERAL"
+        self._ERROR = "ERROR"
+        self._SOURCE = "SOURCE"
+        self._TRANSFER = "TRANSFER"
+        self._CLEANING = "CLEANING"
+        self._INGEST = "INGEST"
+        self._GET_ALL = "GET_ALL"
+        self._GET_ONE = "GET_ONE"
+        self._GET_ACTIVE = "GET_ACTIVE"
+        self._GET_UNSTARTED = "GET_UNSTARTED"
+        self._INSERT = "INSERT"
+        self._DELETE = "DELETE"
+        self._FAILED = "FAILED"
+        self._REJECTED = "REJECTED"
+        self._USER_INPUT = "USER_INPUT"
+        self._COMPLETE = "COMPLETE"
+        self._PROCESSING = "PROCESSING"
+        self._TYPE_TRANSFER = "transfer"
+        self._TYPE_INGEST = "SIP"
+        self._DEFAULT = "default"
+        self._AUTOMATED = "automated"
+
         # API constants
         self._URL_API = "/api"
         self._URL_TRANSFER = self._URL_API + "/transfer"
@@ -37,34 +61,22 @@ class AppConstants:
 
         # Processing path constants
         self._PROCESS_CONF = "processingMCP.xml"
-        self._PROCESS_DEFAULT = "default/"
-        self._PROCESS_AUTOMATED = "automated/"
+        self._PROCESS_CONF_DIR = "conf/"
+        self._PROCESS_DEFAULT = self._PROCESS_CONF_DIR + "default/"
+        self._PROCESS_AUTOMATED = self._PROCESS_CONF_DIR + "automated/"
         self._PROCESS_PATH_AUTOMATED = self._PROCESS_AUTOMATED + self._PROCESS_CONF
         self._PROCESS_PATH_DEFAULT = self._PROCESS_DEFAULT + self._PROCESS_CONF
 
-        self._DEBUG_FILE = "DEBUG"
-        self._DEBUG_PATH = self._HANDLER_PATH + self._DEBUG_FILE
+        self._DEBUG_PATH = self._HANDLER_PATH + self._DEBUG
+        ##########################
 
-        # Miscellaneous constants
-        self._SOURCE = "SOURCE"
-        self._TRANSFER = "TRANSFER"
-        self._CLEANING = "CLEANING"
-        self._INGEST = "INGEST"
-        self._GET_ALL = "GET_ALL"
-        self._GET_ONE = "GET_ONE"
-        self._GET_ACTIVE = "GET_ACTIVE"
-        self._GET_UNSTARTED = "GET_UNSTARTED"
-        self._INSERT = "INSERT"
-        self._DELETE = "DELETE"
-        self._FAILED = "FAILED"
-        self._REJECTED = "REJECTED"
-        self._USER_INPUT = "USER_INPUT"
-        self._COMPLETE = "COMPLETE"
-        self._PROCESSING = "PROCESSING"
-        self._TYPE_TRANSFER = "transfer"
-        self._TYPE_INGEST = "SIP"
-        self._DEFAULT = "default"
-        self._AUTOMATED = "automated"
+        # Logging Constants
+        self._LOG_PATH_GENERAL = self._HANDLER_PATH + "logs/main.log"
+        self._LOG_PATH_ERROR = self._HANDLER_PATH + "logs/error.log"
+        self._LOG_PATH_DELETE = self._HANDLER_PATH + "logs/delete.log"
+        self._LOG_PATH_DEBUG = self._HANDLER_PATH + "logs/debug.log"
+
+        ##########################
 
         # Database constants
         self._DB_FILE = self._HANDLER_PATH + "storage.db"
@@ -212,12 +224,26 @@ class AppConstants:
         return self._PROCESS_PATH_DEFAULT
 
     @property
-    def DEBUG_FILE(self):
-        return self._DEBUG_FILE
-
-    @property
     def DEBUG_PATH(self):
         return self._DEBUG_PATH
+
+    # Logging constants
+
+    @property
+    def LOG_PATH_GENERAL(self):
+        return self._LOG_PATH_GENERAL
+
+    @property
+    def LOG_PATH_ERROR(self):
+        return self._LOG_PATH_ERROR
+
+    @property
+    def LOG_PATH_DEBUG(self):
+        return self._LOG_PATH_DEBUG
+
+    @property
+    def LOG_PATH_DELETE(self):
+        return self._LOG_PATH_DELETE
 
     # Database constants
 
@@ -322,6 +348,18 @@ class AppConstants:
         return self._UNSTARTED_SOURCE
 
     # Miscellaneous constants
+
+    @property
+    def DEBUG(self):
+        return self._DEBUG
+
+    @property
+    def GENERAL(self):
+        return self._GENERAL
+
+    @property
+    def ERROR(self):
+        return self._ERROR
 
     @property
     def SOURCE(self):

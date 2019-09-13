@@ -1,27 +1,40 @@
+import logging
 import os
 from constants import AppConstants
 from datetime import datetime
 
 AppConstants = AppConstants()
 
+def setup_logger(logger_name, log_file, level=logging.INFO):
+    l = logging.getLogger(logger_name)
+    formatter = logging.Formatter('%(asctime)s : %(message)s')
+    fileHandler = logging.FileHandler(log_file, mode='w')
+    fileHandler.setFormatter(formatter)
+    streamHandler = logging.StreamHandler()
+    streamHandler.setFormatter(formatter)
+
+    l.setLevel(level)
+    l.addHandler(fileHandler)
+    l.addHandler(streamHandler)
 
 def open_log_writer():
-    f = open("logs/transfer.log", "a")
-    return f
+    setup_logger(AppConstants.GENERAL, AppConstants.LOG_PATH_GENERAL)
+    return logging.getLogger(AppConstants.GENERAL)
 
 
 def open_error_writer():
-    f = open("logs/error.log", "a")
-    return f
+    setup_logger(AppConstants.ERROR, AppConstants.LOG_PATH_ERROR)
+    return logging.getLogger(AppConstants.ERROR)
 
 
 def open_delete_writer():
-    f = open("logs/delete.log", "a")
-    return f
+    setup_logger(AppConstants.DELETE, AppConstants.LOG_PATH_DELETE)
+    return logging.getLogger(AppConstants.DELETE)
 
 
-def create_timestamp():
-    return str(datetime.now())
+def open_debug_writer():
+    setup_logger(AppConstants.DEBUG, AppConstants.LOG_PATH_DEBUG)
+    return logging.getLogger(AppConstants.DEBUG)
 
 
 def debug_mode():
@@ -36,11 +49,11 @@ def write_log(message, log_type):
         logger = open_error_writer()
     elif log_type is "[DELETE]":
         logger = open_delete_writer()
+    elif log_type is "[DEBUG]":
+        logger = open_debug_writer()
     else:
         logger = open_log_writer()
     if (log_type == "[DEBUG]" and debug_mode()) or log_type == "[INFO]" \
             or log_type == "[ERROR]" or log_type == "[DELETE]":
-        logger.write(log_type + "\t" + create_timestamp() + "\t" + message + "\n")
-    logger.flush()
-    logger.close()
+        logger.info(log_type + ":\t" + message + "\n")
     return True
